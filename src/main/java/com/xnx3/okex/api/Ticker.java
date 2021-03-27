@@ -1,4 +1,4 @@
-package com;
+package com.xnx3.okex.api;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +10,7 @@ import com.xnx3.net.HttpsUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-public class Test {
+public class Ticker {
 	static String domain = "https://0ecc86004b204544a55f07cc25bd4692.apig.la-south-2.huaweicloudapis.com";
 	static HttpsUtil https = new HttpsUtil();
 	

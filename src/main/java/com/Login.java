@@ -1,23 +1,49 @@
 package com;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.xnx3.net.HttpResponse;
 import com.xnx3.net.HttpsUtil;
+import com.xnx3.okex.util.HmacSHA256Base64Utils;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-public class Test {
+public class Login {
 	static String domain = "https://0ecc86004b204544a55f07cc25bd4692.apig.la-south-2.huaweicloudapis.com";
 	static HttpsUtil https = new HttpsUtil();
 	
 	public static void main(String[] args) {
 		System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2,SSLv3");
-//		oneHangqing("PMA-USDK");
-		allHangqing();
+		
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("OK-ACCESS-KEY", "");
+		headers.put("OK-ACCESS-TIMESTAMP", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.000'Z'").format(new Date()));
+		headers.put("OK-ACCESS-PASSPHRASE", "");
+		
+		String secretKey = "";
+		String sign = null;
+		try {
+			sign = HmacSHA256Base64Utils.sign(headers.get("OK-ACCESS-TIMESTAMP"), "GET", "/api/v5/account/balance", "", "", secretKey);
+		} catch (InvalidKeyException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		System.out.println(headers.get("OK-ACCESS-TIMESTAMP"));
+		System.out.println(sign);
+		headers.put("OK-ACCESS-SIGN", sign);
+		
+		HttpResponse hr = https.get(domain+"/api/v5/account/balance", headers);
+		System.out.println(hr.getContent());
 		
 	}
 	
@@ -95,7 +121,7 @@ public class Test {
 			double cha = ask - bid;
 			double cha_baifenbi = cha/ask;
 			if(cha_baifenbi > 0.10) {
-				System.out.println("============="+cha_baifenbi+",    "+json.getString("instId")+", \t\t"+bid);
+				System.out.println("============="+cha_baifenbi+",    "+json.getString("instId"));
 			}else {
 				//System.out.println(cha_baifenbi+",    "+json.getString("instId")+"  "+json.getString("instType"));
 			}
