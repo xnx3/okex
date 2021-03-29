@@ -24,6 +24,26 @@
 		  <artifactId>commons-lang3</artifactId>
 		  <version>3.12.0</version>
 		</dependency>
+		<dependency>
+	       <groupId>com.xnx3</groupId>  
+	       <artifactId>xnx3</artifactId>  
+	       <version>2.3</version>  
+		</dependency>
+		
+		<dependency>
+		  <groupId>com.xnx3.swing</groupId>
+		  <artifactId>xnx3-swing</artifactId>
+		  <version>1.0</version>
+		</dependency>
+		
+		<!-- 本地的 -->
+	    <dependency> 
+	        <groupId>com.xnx3.jl</groupId>  
+	        <artifactId>jl</artifactId>  
+	        <version>1</version>  
+	        <scope>system</scope>  
+    		<systemPath>${project.basedir}/lib/jl1.0.1.jar</systemPath>  
+	    </dependency>
     </dependencies>
 
     <build>
