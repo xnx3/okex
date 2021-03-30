@@ -74,7 +74,14 @@ public class HttpsUtil {
 			queryString = "";
 		}
 		HttpResponse hr = http.get(Global.OKEX_DOMAIN+url+queryString, null, headers);
+		if(hr.getCode() != 200){
+			Log.log(hr.toString());
+		}
 		JSONObject json = JSONObject.fromObject(hr.getContent());
+		if(!json.getString("code").equals("0")){
+			Log.log(json.toString());
+		}
+		System.out.println(json);
 		return json;
 	}
 	

@@ -14,10 +14,7 @@ import net.sf.json.JSONObject;
 
 public class Ticker {
 	public static void main(String[] args) {
-		System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2,SSLv3");
-//		oneHangqing("PMA-USDK");
-		allHangqing();
-		
+		System.out.println(liruncha());
 	}
 	
 	/**
@@ -37,40 +34,24 @@ public class Ticker {
 			return null;
 		}
 		return jsonArray.getJSONObject(0);
-//		for (int i = 0; i < jsonArray.size(); i++) {
-//			JSONObject json = jsonArray.getJSONObject(i);
-//			String askStr = json.getString("askPx");	//卖价
-//			String bidStr = json.getString("bidPx");	//买价
-//			
-//			double ask = Double.parseDouble(askStr);
-//			double bid = Double.parseDouble(bidStr);
-//			
-//			//算一下卖价跟买价差多少
-//			double cha = ask - bid;
-//			double cha_baifenbi = cha/ask;
-//			if(cha_baifenbi > 0.15) {
-//				System.out.println("============="+cha_baifenbi+",    "+json.getString("instId"));
-//			}else {
-//				System.out.println(cha_baifenbi+",    "+json.getString("instId"));
-//			}
-//			
-//		}
 	}
 	
 	//所有产品行情
-	public static void allHangqing() {
+	public static JSONArray allHangqing() {
 		JSONObject json = com.xnx3.okex.util.HttpsUtil.get("/api/v5/market/tickers?instType=SPOT");
 		System.out.println(json);
-		JSONArray jsonArray = json.getJSONArray("data");
+		return json.getJSONArray("data");
+	}
+	
+	/**
+	 * 有利润查，可以买的币种
+	 */
+	public static JSONArray liruncha(){
+		JSONArray resultJsonArray = new JSONArray();
+		
+		JSONArray jsonArray = allHangqing();
 		for (int i = 0; i < jsonArray.size(); i++) {
 			JSONObject jsonItem = jsonArray.getJSONObject(i);
-			//System.out.println(json.get("instId"));
-//			try {
-//				Thread.sleep(500);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//			oneHangqing(json.getString("instId"));
 			String instId = jsonItem.getString("instId");
 			
 			//判断是否是usdt、usdk的，不是就直接不看
@@ -107,13 +88,16 @@ public class Ticker {
 			//算一下卖价跟买价差多少
 			double cha = ask - bid;
 			double cha_baifenbi = cha/ask;
-			if(cha_baifenbi > 0.10) {
-				System.out.println("============="+cha_baifenbi+",    "+jsonItem.getString("instId")+", \t\t"+bid);
+			if(cha_baifenbi > 0.05) {
+				jsonItem.put("lirunbaifenbi", cha_baifenbi);
+				resultJsonArray.add(jsonItem);
+//				System.out.println("============="+cha_baifenbi+",    "+jsonItem.getString("instId")+", \t\t"+bid);
 			}else {
 				//System.out.println(cha_baifenbi+",    "+json.getString("instId")+"  "+json.getString("instType"));
 			}
-			
 		}
+		
+		return resultJsonArray;
 	}
 	
 	/**
@@ -124,7 +108,7 @@ public class Ticker {
 			return false;
 		}
 		String[] s = instId.split("-");
-		if(s.length == 2 && (s[1].equals("USDT") || s[1].equals("USDK"))) {
+		if(s.length == 2 && (s[1].equals("USDT") || s[1].equals("USDK") || s[1].equals("BTC"))) {
 			return true;
 		}
 		return false;

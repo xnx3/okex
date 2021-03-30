@@ -1,5 +1,6 @@
 package com.xnx3.okex.api;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,16 +43,28 @@ public class Account {
 	/**
 	 * 账单流水查询，最近7天的。
 	 */
-	public static void bills(){
-		JSONObject json = com.xnx3.okex.util.HttpsUtil.getLoginRequest("/api/v5/account/bills", "");
+	public static List<Bill> bills(){
+		List<Bill> list = new ArrayList<Bill>();
+		
+		JSONObject json = com.xnx3.okex.util.HttpsUtil.getLoginRequest("/api/v5/account/bills", "instType=SPOT&type=2");
 		JSONArray jsonArray = json.getJSONArray("data");
 		for (int i = 0; i < jsonArray.size(); i++) {
 			JSONObject item = jsonArray.getJSONObject(i);
-			
+			System.out.println(item.toString());
 			Bill bill = new Bill();
 			bill.setBillId(item.getString("billId"));
-			
+			bill.setCreateTime(item.getLong("ts"));
+			bill.setFee(item.getDouble("fee"));
+			bill.setInstType(item.getString("instType"));
+			bill.setOrderId(item.getString("ordId"));
+			bill.setSize(item.getDouble("sz"));
+			bill.setType(item.getString("type"));
+			bill.setInstId(item.getString("instId"));
+			bill.setSubType(item.getInt("subType"));
+			bill.setCcy(item.getString("ccy"));
+			list.add(bill);
 		}
+		return list;
 	}
 	
 }
