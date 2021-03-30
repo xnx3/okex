@@ -32,10 +32,10 @@ public class PMA {
 		
 		JSONObject pma_btc_json = Ticker.oneHangqing("PMA-BTC");
 		
-		sb.append("\npma-btc 买价:");
+		sb.append("\npma-btc 卖出:");
 		sb.append("\n\t pric:"+pma_btc_json.getString("askPx")+" BTC, \t usdk pric:"+(pma_btc_json.getDouble("askPx")*btcusdtPrice));
 		
-		sb.append("\npma-btc 卖价:");
+		sb.append("\npma-btc 买入:");
 		sb.append("\n\t pric:"+pma_btc_json.getString("bidPx")+" BTC, \t usdk pric:"+(pma_btc_json.getDouble("bidPx")*btcusdtPrice));
 		
 		return sb.toString();
