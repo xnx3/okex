@@ -23,11 +23,11 @@ public class Login {
 		System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2,SSLv3");
 		
 		Map<String, String> headers = new HashMap<String, String>();
-		headers.put("OK-ACCESS-KEY", "");
+		headers.put("OK-ACCESS-KEY", "221bd9dd-d9ab-48c4-bc7e-8a02d55b8d05");
 		headers.put("OK-ACCESS-TIMESTAMP", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.000'Z'").format(new Date()));
-		headers.put("OK-ACCESS-PASSPHRASE", "");
+		headers.put("OK-ACCESS-PASSPHRASE", "passphrase3o8fygfy3o8qyg4");
 		
-		String secretKey = "";
+		String secretKey = "0532364D772A3708F8BD7E56B8BE65F8";
 		String sign = null;
 		try {
 			sign = HmacSHA256Base64Utils.sign(headers.get("OK-ACCESS-TIMESTAMP"), "GET", "/api/v5/account/balance", "", "", secretKey);

@@ -45,6 +45,7 @@ public class HttpsUtil {
 		long currentTime = DateUtil.timeForUnix13();//当前北京时间
 		//减去8小时的时间，取伦敦时间
 		long time = currentTime - 60*60*8*1000;
+//		long time = currentTime;
 		
 //		String timeS = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.000'Z'").format(new Date())
 		Date date = new Date(time);
@@ -65,7 +66,6 @@ public class HttpsUtil {
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
-		System.out.println(timeS);
 		headers.put("OK-ACCESS-SIGN", sign);
 		
 		if(queryString != null && queryString.length() > 0){
@@ -73,14 +73,13 @@ public class HttpsUtil {
 		}else{
 			queryString = "";
 		}
-		HttpResponse hr = http.get(Global.OKEX_DOMAIN+"/api/v5/account/balance"+queryString, null, headers);
-		System.out.println(hr);
+		HttpResponse hr = http.get(Global.OKEX_DOMAIN+url+queryString, null, headers);
 		JSONObject json = JSONObject.fromObject(hr.getContent());
 		return json;
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(getLoginRequest("/api/v5/account/positions", ""));
+		System.out.println(getLoginRequest("/api/v5/account/bills", ""));
 		
 	}
 }

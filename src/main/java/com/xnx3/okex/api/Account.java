@@ -8,6 +8,7 @@ import com.xnx3.net.HttpResponse;
 import com.xnx3.net.HttpUtil;
 import com.xnx3.net.HttpsUtil;
 import com.xnx3.okex.Global;
+import com.xnx3.okex.bean.Bill;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -38,10 +39,19 @@ public class Account {
 		}
 	}
 	
-	
+	/**
+	 * 账单流水查询，最近7天的。
+	 */
 	public static void bills(){
 		JSONObject json = com.xnx3.okex.util.HttpsUtil.getLoginRequest("/api/v5/account/bills", "");
-		System.out.println(json);
+		JSONArray jsonArray = json.getJSONArray("data");
+		for (int i = 0; i < jsonArray.size(); i++) {
+			JSONObject item = jsonArray.getJSONObject(i);
+			
+			Bill bill = new Bill();
+			bill.setBillId(item.getString("billId"));
+			
+		}
 	}
 	
 }

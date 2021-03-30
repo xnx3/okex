@@ -78,7 +78,7 @@ public class HmacSHA256Base64Utils {
             //改动了
             //preHash.append(queryString);
         }
-        //post方法
+//        post方法
         if (StringUtils.isNotEmpty(body)) {
             preHash.append(body);
         }
