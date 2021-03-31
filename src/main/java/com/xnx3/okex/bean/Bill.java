@@ -1,7 +1,7 @@
 package com.xnx3.okex.bean;
 
 /**
- * 账单、订单
+ * 不知道干嘛的，订单用 trade.order
  * @author 管雷鸣
  *
  */

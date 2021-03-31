@@ -81,7 +81,6 @@ public class HttpsUtil {
 		if(!json.getString("code").equals("0")){
 			Log.log(json.toString());
 		}
-		System.out.println(json);
 		return json;
 	}
 	

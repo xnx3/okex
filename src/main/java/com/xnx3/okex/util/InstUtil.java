@@ -6,6 +6,11 @@ package com.xnx3.okex.util;
  *
  */
 public class InstUtil {
+	public static void main(String[] args) {
+		System.out.println(getPriceName("BTC-USDT"));
+		
+		
+	}
 	
 	/**
 	 * 获取币价格的单位，如 PMA-USDK 返回的是USDK

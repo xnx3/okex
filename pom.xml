@@ -36,6 +36,13 @@
 		  <version>1.0</version>
 		</dependency>
 		
+		<!-- sqlite -->
+		<dependency>
+		  <groupId>org.xerial</groupId>
+		  <artifactId>sqlite-jdbc</artifactId>
+		  <version>3.28.0</version>
+		</dependency>
+		
 		<!-- 本地的 -->
 	    <dependency> 
 	        <groupId>com.xnx3.jl</groupId>  

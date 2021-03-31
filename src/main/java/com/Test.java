@@ -1,11 +1,20 @@
 package com;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.xnx3.DateUtil;
+import com.xnx3.exception.NotReturnValueException;
 import com.xnx3.net.HttpResponse;
 import com.xnx3.net.HttpsUtil;
+import com.xnx3.okex.api.Account;
+import com.xnx3.okex.bean.Bill;
+import com.xnx3.okex.bean.trade.Order;
+import com.xnx3.okex.util.DB;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -15,10 +24,25 @@ public class Test {
 	static HttpsUtil https = new HttpsUtil();
 	
 	public static void main(String[] args) {
-		System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2,SSLv3");
-//		oneHangqing("PMA-USDK");
-		allHangqing();
+//		List<Bill> billList = Account.bills();
+//		for (int i = 0; i < billList.size(); i++) {
+//			Bill bill = billList.get(i);
+//			try {
+//				System.out.println(DateUtil.dateFormat(bill.getCreateTime(), "yy-MM-dd hh:mm:ss")+","+bill.toString());
+//			} catch (NotReturnValueException e) {
+//				e.printStackTrace();
+//			}
+//		}
 		
+		
+//		DB.getDatabase().
+		
+		List<Order> list = DB.getDatabase().select(Order.class, "WHERE id = 296681757869502464");
+		if(list.size() == 0){
+			System.out.println("0000");
+		}
+		
+		DB.getDatabase().closeConn();
 	}
 	
 	//某个产品的行情

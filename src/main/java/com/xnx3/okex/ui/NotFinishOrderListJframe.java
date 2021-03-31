@@ -14,9 +14,7 @@ import javax.swing.table.TableRowSorter;
 
 import com.xnx3.DateUtil;
 import com.xnx3.exception.NotReturnValueException;
-import com.xnx3.okex.api.Ticker;
 import com.xnx3.okex.api.Trade;
-import com.xnx3.okex.util.InstUtil;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -28,11 +26,11 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 
 /**
- * 所有币里面，价格波动最大，买卖利润最大的几个
+ * 未完成的订单列表，进行中的
  * @author 管雷鸣
  *
  */
-public class PriceBodongJframe extends JFrame {
+public class NotFinishOrderListJframe extends JFrame {
 	public DefaultTableModel model;
 	private JPanel contentPane;
 	private JTable table;
@@ -44,7 +42,7 @@ public class PriceBodongJframe extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					PriceBodongJframe frame = new PriceBodongJframe();
+					NotFinishOrderListJframe frame = new NotFinishOrderListJframe();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -56,8 +54,8 @@ public class PriceBodongJframe extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public PriceBodongJframe() {
-		setTitle("所有货币买卖波动情况");
+	public NotFinishOrderListJframe() {
+		setTitle("未成交的订单，进行中的订单");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -80,40 +78,22 @@ public class PriceBodongJframe extends JFrame {
 		Vector vData = new Vector();
 		Vector vName = new Vector();
 		vName.add("币种");
-		vName.add("卖价");
-		vName.add("买价");
-		vName.add("利润率%");
-		vName.add("24h交易量");
-		vName.add("24h交易货币");
+		vName.add("单价");
+		vName.add("交易数量");
+		vName.add("买-卖");
+		vName.add("创建时间");
 		
 		model = new DefaultTableModel(vData, vName){};
 		table = new JTable();
 		table.setModel(model);
+		RowSorter<TableModel> rowSorter = new TableRowSorter<TableModel>(model);
+        table.setRowSorter(rowSorter);
 		
 		scrollPane.setViewportView(table);
 		
 		loadJTableData();
 		
 		this.setVisible(true);
-		
-		
-		new Thread(new Runnable() {
-			public void run() {
-				while(true){
-					try {
-						loadJTableData();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					try {
-						//30秒刷新一次数据
-						Thread.sleep(30*1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}).start();
 	}
 	
 
@@ -121,7 +101,8 @@ public class PriceBodongJframe extends JFrame {
 	 * 加载表格数据
 	 */
 	private void loadJTableData(){
-		JSONArray array = Ticker.liruncha();
+		JSONArray array = Trade.ordersPending();
+		
 		model.setRowCount(0); //清除所有数据
 		
 		//加载楼号的数据
@@ -129,16 +110,16 @@ public class PriceBodongJframe extends JFrame {
 			JSONObject item = array.getJSONObject(j);
 			Vector vRow = new Vector();
 			vRow.add(item.getString("instId"));
-			vRow.add(item.getString("askPx"));
-			vRow.add(item.getString("bidPx"));
-			vRow.add((int)(item.getDouble("lirunbaifenbi")*100));
-			vRow.add(item.getString("vol24h"));
-			vRow.add(item.getString("volCcy24h"));
+			vRow.add(item.getString("px"));
+			vRow.add(item.getString("sz"));
+			vRow.add(item.getString("side"));
+			try {
+				vRow.add(DateUtil.dateFormat(item.getLong("cTime"), "dd HH:mm:ss"));
+			} catch (NotReturnValueException e) {
+				e.printStackTrace();
+			}
 			model.addRow(vRow);
 		}
-		
-		RowSorter<TableModel> rowSorter = new TableRowSorter<TableModel>(model);
-        table.setRowSorter(rowSorter);
 	}
 
 	public JTable getTable() {

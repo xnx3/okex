@@ -90,7 +90,7 @@ public class MainJframe extends JFrame {
 		JButton button_1 = new JButton("未成交订单列表");
 		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new OrderListJframe().setVisible(true);
+				new NotFinishOrderListJframe().setVisible(true);
 			}
 		});
 		
@@ -98,6 +98,15 @@ public class MainJframe extends JFrame {
 		button_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new PriceBodongJframe().setVisible(true);
+			}
+		});
+		
+		JButton button_3 = new JButton("已成交订单列表");
+		button_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new FinishOrderListJframe().setVisible(true);
+				
+				
 			}
 		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -115,7 +124,10 @@ public class MainJframe extends JFrame {
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(12)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(button_1)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(button_1)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(button_3))
 								.addComponent(panel, GroupLayout.PREFERRED_SIZE, 394, GroupLayout.PREFERRED_SIZE)
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addGap(6)
@@ -133,7 +145,9 @@ public class MainJframe extends JFrame {
 					.addGap(53)
 					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
 					.addGap(18)
-					.addComponent(button_1)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(button_1)
+						.addComponent(button_3))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(button_2)
 					.addContainerGap(30, Short.MAX_VALUE))

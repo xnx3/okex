@@ -9,6 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import com.xnx3.DateUtil;
 import com.xnx3.exception.NotReturnValueException;
@@ -19,15 +21,16 @@ import net.sf.json.JSONObject;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.RowSorter;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 
 /**
- * 订单了表
+ * 已成交的订单列表
  * @author 管雷鸣
  *
  */
-public class OrderListJframe extends JFrame {
+public class FinishOrderListJframe extends JFrame {
 	public DefaultTableModel model;
 	private JPanel contentPane;
 	private JTable table;
@@ -39,7 +42,7 @@ public class OrderListJframe extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					OrderListJframe frame = new OrderListJframe();
+					NotFinishOrderListJframe frame = new NotFinishOrderListJframe();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -51,8 +54,8 @@ public class OrderListJframe extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public OrderListJframe() {
-		setTitle("未成交的订单");
+	public FinishOrderListJframe() {
+		setTitle("已成交的订单列表");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -75,15 +78,17 @@ public class OrderListJframe extends JFrame {
 		Vector vData = new Vector();
 		Vector vName = new Vector();
 		vName.add("币种");
-		vName.add("类型");
 		vName.add("单价");
 		vName.add("交易数量");
 		vName.add("买-卖");
 		vName.add("创建时间");
+		vName.add("成交时间");
 		
 		model = new DefaultTableModel(vData, vName){};
 		table = new JTable();
 		table.setModel(model);
+		RowSorter<TableModel> rowSorter = new TableRowSorter<TableModel>(model);
+        table.setRowSorter(rowSorter);
 		
 		scrollPane.setViewportView(table);
 		
@@ -97,7 +102,7 @@ public class OrderListJframe extends JFrame {
 	 * 加载表格数据
 	 */
 	private void loadJTableData(){
-		JSONArray array = Trade.ordersPending();
+		JSONArray array = Trade.ordersHistory();
 		
 		model.setRowCount(0); //清除所有数据
 		
@@ -106,12 +111,16 @@ public class OrderListJframe extends JFrame {
 			JSONObject item = array.getJSONObject(j);
 			Vector vRow = new Vector();
 			vRow.add(item.getString("instId"));
-			vRow.add(item.getString("state"));
 			vRow.add(item.getString("px"));
 			vRow.add(item.getString("sz"));
 			vRow.add(item.getString("side"));
 			try {
-				vRow.add(DateUtil.dateFormat(item.getLong("cTime"), "dd HH:mm:ss"));
+				vRow.add(DateUtil.dateFormat(item.getLong("cTime"), "MM-dd HH:mm:ss"));
+			} catch (NotReturnValueException e) {
+				e.printStackTrace();
+			}
+			try {
+				vRow.add(DateUtil.dateFormat(item.getLong("uTime"), "MM-dd HH:mm:ss"));
 			} catch (NotReturnValueException e) {
 				e.printStackTrace();
 			}
