@@ -2,6 +2,7 @@ package com.xnx3.okex.action;
 
 import java.util.List;
 
+import com.xnx3.CacheUtil;
 import com.xnx3.DateUtil;
 import com.xnx3.exception.NotReturnValueException;
 import com.xnx3.okex.api.Ticker;
@@ -41,8 +42,17 @@ public class Money {
 	 * @return
 	 */
 	public static double BtcToUsdt(double btc){
-		JSONObject json = Ticker.oneHangqing("BTC-USDT");
-		double usdt = json.getDouble("last");
+		Object obj = CacheUtil.get("btc-usdt:price");
+		double usdt = 0;
+		if(obj == null){
+			JSONObject json = Ticker.oneHangqing("BTC-USDT");
+			usdt = json.getDouble("last");
+			// 20秒缓存
+			CacheUtil.set("btc-usdt:price", usdt, 20);
+		}else{
+			usdt = (double) obj;
+		}
+		
 		return btc*usdt;
 	}
 	

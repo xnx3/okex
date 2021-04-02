@@ -37,10 +37,23 @@ public class Test {
 		
 //		DB.getDatabase().
 		
-		List<Order> list = DB.getDatabase().select(Order.class, "WHERE id = 296681757869502464");
-		if(list.size() == 0){
-			System.out.println("0000");
+		ResultSet rs = DB.getDatabase().select("SELECT sum(money) AS money, sum(size), instId FROM \"order\" GROUP BY instId");
+		
+		try {
+			while(rs.next()){
+//				for (int i = 1; i < rs.getMetaData().getColumnCount(); i++) {
+//					System.out.println(rs.getString(i));
+//				}
+				System.out.println(rs.getString("money")+"\t"+rs.getString(2)+"\t"+rs.getString("instId"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+		
+//		List<Order> list = DB.getDatabase().select(Order.class, "SELECT * FROM \"order\" GROUP BY instId");
+//		for (int i = 0; i < list.size(); i++) {
+//			System.out.println(list.get(i));
+//		}
 		
 		DB.getDatabase().closeConn();
 	}

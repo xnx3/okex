@@ -1,5 +1,7 @@
 package com.xnx3.okex.util;
 
+import java.math.BigDecimal;
+
 /**
  * Double的操作
  * @author 管雷鸣
@@ -30,6 +32,16 @@ public class DoubleUtil {
 		}
 		double dou = d * x;
 		return (Math.round(dou)+0.0)/x;
+	}
+	
+	/**
+	 * 将 double 转为 String 显示，其实就是为了去掉科学计数法的E
+	 * @param value double值
+	 * @return String值
+	 */
+	public static String doubleToString(double value){
+		BigDecimal bd = new BigDecimal(value+"");
+		return bd.toString();
 	}
 	
 	public static void main(String[] args) {

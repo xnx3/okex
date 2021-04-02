@@ -3,6 +3,9 @@ package com.xnx3.okex.ui;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -15,6 +18,10 @@ import javax.swing.table.TableRowSorter;
 import com.xnx3.DateUtil;
 import com.xnx3.exception.NotReturnValueException;
 import com.xnx3.okex.api.Trade;
+import com.xnx3.okex.bean.trade.Order;
+import com.xnx3.okex.thread.FinishOrder;
+import com.xnx3.okex.util.DB;
+import com.xnx3.okex.util.DoubleUtil;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -81,6 +88,7 @@ public class FinishOrderListJframe extends JFrame {
 		vName.add("单价");
 		vName.add("交易数量");
 		vName.add("买-卖");
+		vName.add("金额(USDT)");
 		vName.add("创建时间");
 		vName.add("成交时间");
 		
@@ -92,7 +100,18 @@ public class FinishOrderListJframe extends JFrame {
 		
 		scrollPane.setViewportView(table);
 		
-		loadJTableData();
+		new Thread(new Runnable() {
+			public void run() {
+				while(true){
+					loadJTableData();
+					try {
+						Thread.sleep(10*1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}).start();
 		
 		this.setVisible(true);
 	}
@@ -102,25 +121,25 @@ public class FinishOrderListJframe extends JFrame {
 	 * 加载表格数据
 	 */
 	private void loadJTableData(){
-		JSONArray array = Trade.ordersHistory();
-		
+//		JSONArray array = Trade.ordersHistory();
 		model.setRowCount(0); //清除所有数据
+		List<Order> list = DB.getDatabase().select(Order.class, "ORDER BY updateTime DESC LIMIT 300"); 
 		
-		//加载楼号的数据
-		for (int j = 0; j < array.size(); j++) {
-			JSONObject item = array.getJSONObject(j);
-			Vector vRow = new Vector();
-			vRow.add(item.getString("instId"));
-			vRow.add(item.getString("px"));
-			vRow.add(item.getString("sz"));
-			vRow.add(item.getString("side"));
+		for (int i = 0; i < list.size(); i++) {
+			 Order order = list.get(i);
+			 Vector vRow = new Vector();
+			vRow.add(order.getInstId());
+			vRow.add(order.getPrice());
+			vRow.add(order.getSize());
+			vRow.add(order.getSide());
+			vRow.add(DoubleUtil.doubleToString(DoubleUtil.doubleSplit(order.getMoney(), 6)));
 			try {
-				vRow.add(DateUtil.dateFormat(item.getLong("cTime"), "MM-dd HH:mm:ss"));
+				vRow.add(DateUtil.dateFormat(order.getCreateTime(), "MM-dd HH:mm:ss"));
 			} catch (NotReturnValueException e) {
 				e.printStackTrace();
 			}
 			try {
-				vRow.add(DateUtil.dateFormat(item.getLong("uTime"), "MM-dd HH:mm:ss"));
+				vRow.add(DateUtil.dateFormat(order.getUpdateTime(), "MM-dd HH:mm:ss"));
 			} catch (NotReturnValueException e) {
 				e.printStackTrace();
 			}

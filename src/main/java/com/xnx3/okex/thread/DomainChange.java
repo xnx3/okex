@@ -3,8 +3,6 @@ package com.xnx3.okex.thread;
 import com.xnx3.net.HttpResponse;
 import com.xnx3.net.HttpUtil;
 import com.xnx3.okex.Global;
-import com.xnx3.okex.util.HttpsUtil;
-
 import net.sf.json.JSONObject;
 
 /**
@@ -13,11 +11,15 @@ import net.sf.json.JSONObject;
  *
  */
 public class DomainChange extends Thread{
-	public static String[] domains = {"http://hk.okex.zvo.cn","http://xinjiapo.okex.zvo.cn","http://meiguo.okex.zvo.cn"};
+	public static String[] domains = {"https://www.okex.win","http://hk.okex.zvo.cn","http://xinjiapo.okex.zvo.cn","http://meiguo.okex.zvo.cn"};
 	public static HttpUtil http;
 	static{
 		http = new HttpUtil();
 		http.setTimeout(10);
+	}
+	
+	public static void main(String[] args) {
+		new DomainChange().start();
 	}
 	
 	public void run() {
@@ -36,6 +38,7 @@ public class DomainChange extends Thread{
 					}
 				} catch (Exception e) {
 					//接口出问题，继续试下一个
+//					System.out.println("DomainChange Thread -- "+domains[i]+"\t not use..");
 					continue;
 				}
 			}

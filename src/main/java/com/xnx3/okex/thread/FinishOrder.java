@@ -80,11 +80,12 @@ public class FinishOrder extends Thread{
 					}
 					System.out.println("发现新完成的订单，加入："+JSONObject.fromObject(order));
 					
-					com.xnx3.media.TTSUtil.speakByThread("交易成功，"+order.getInstId()+",价格"+order.getPrice());
+					
+					com.xnx3.media.TTSUtil.speakByThread(order.getSide()+order.getInstId()+",价格"+order.getPrice());
 					
 					try {
 						//加点延迟
-						Thread.sleep(500);
+						Thread.sleep(5*1000);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

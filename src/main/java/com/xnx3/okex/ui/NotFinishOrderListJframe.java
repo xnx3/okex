@@ -91,7 +91,18 @@ public class NotFinishOrderListJframe extends JFrame {
 		
 		scrollPane.setViewportView(table);
 		
-		loadJTableData();
+		new Thread(new Runnable() {
+			public void run() {
+				while(true){
+					loadJTableData();
+					try {
+						Thread.sleep(10*1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}).start();
 		
 		this.setVisible(true);
 	}

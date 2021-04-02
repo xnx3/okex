@@ -29,12 +29,16 @@
 	       <artifactId>xnx3</artifactId>  
 	       <version>2.3</version>  
 		</dependency>
-		
 		<dependency>
 		  <groupId>com.xnx3.swing</groupId>
 		  <artifactId>xnx3-swing</artifactId>
 		  <version>1.0</version>
 		</dependency>
+		<dependency> 
+	        <groupId>com.xnx3.cache</groupId>  
+	        <artifactId>xnx3-cache</artifactId>  
+	        <version>1.1.1</version>  
+	    </dependency>
 		
 		<!-- sqlite -->
 		<dependency>

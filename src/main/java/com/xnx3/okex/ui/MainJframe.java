@@ -109,6 +109,13 @@ public class MainJframe extends JFrame {
 				
 			}
 		});
+		
+		JButton button_4 = new JButton("金额及统计");
+		button_4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new MoneyJframe().setVisible(true);
+			}
+		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -131,7 +138,9 @@ public class MainJframe extends JFrame {
 								.addComponent(panel, GroupLayout.PREFERRED_SIZE, 394, GroupLayout.PREFERRED_SIZE)
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addGap(6)
-									.addComponent(button_2)))))
+									.addComponent(button_2)
+									.addGap(18)
+									.addComponent(button_4)))))
 					.addContainerGap(34, Short.MAX_VALUE))
 		);
 		gl_contentPane.setVerticalGroup(
@@ -149,7 +158,9 @@ public class MainJframe extends JFrame {
 						.addComponent(button_1)
 						.addComponent(button_3))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(button_2)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(button_2)
+						.addComponent(button_4))
 					.addContainerGap(30, Short.MAX_VALUE))
 		);
 		

@@ -1,5 +1,7 @@
 package com.xnx3.okex.bean.market;
 
+import net.sf.json.JSONObject;
+
 /**
  * K线波动
  * @author 管雷鸣
@@ -48,6 +50,10 @@ public class Candle {
 	}
 	public void setMoney(double money) {
 		this.money = money;
+	}
+	@Override
+	public String toString() {
+		return JSONObject.fromObject(this).toString();
 	}
 	
 	

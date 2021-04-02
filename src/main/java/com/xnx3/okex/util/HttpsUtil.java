@@ -16,8 +16,22 @@ import net.sf.json.JSONObject;
 
 public class HttpsUtil {
 	public static HttpUtil http;
+	public static com.xnx3.net.HttpsUtil https;
 	static{
 		http = new HttpUtil();
+	}
+	
+	/**
+	 * 判断当前是否使用的是https的，是则是返回true
+	 * @param url
+	 * @return
+	 */
+	public static boolean isHttps(String url){
+		if(url.indexOf("https://") == 0){
+			return true;
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -26,7 +40,13 @@ public class HttpsUtil {
 	 * @return
 	 */
 	public static JSONObject get(String url){
-		HttpResponse hr = http.get(Global.OKEX_DOMAIN+url);
+		HttpResponse hr;
+		if(isHttps(url)){
+			hr = https.get(Global.OKEX_DOMAIN+url);
+		}else{
+			hr = http.get(Global.OKEX_DOMAIN+url);
+		}
+		
 		JSONObject json = JSONObject.fromObject(hr.getContent());
 //		if(json.get("code")){
 //			
@@ -73,13 +93,20 @@ public class HttpsUtil {
 		}else{
 			queryString = "";
 		}
-		HttpResponse hr = http.get(Global.OKEX_DOMAIN+url+queryString, null, headers);
+		
+		HttpResponse hr;
+		if(isHttps(url)){
+			hr = https.get(Global.OKEX_DOMAIN+url+queryString, headers);
+		}else{
+			hr = http.get(Global.OKEX_DOMAIN+url+queryString, null, headers);
+		}
+		
 		if(hr.getCode() != 200){
 			Log.log(hr.toString());
 		}
 		JSONObject json = JSONObject.fromObject(hr.getContent());
 		if(!json.getString("code").equals("0")){
-			Log.log(json.toString());
+			Log.log("接口响应失败： \t"+json.toString());
 		}
 		return json;
 	}
