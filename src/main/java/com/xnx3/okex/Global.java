@@ -5,7 +5,7 @@ import com.xnx3.SystemUtil;
 public class Global {
 	
 	//OKEX接口的域名
-	public static String OKEX_DOMAIN = "http://hk.okex.zvo.cn";
+	public static String OKEX_DOMAIN = "https://www.okex.win";
 	
 	//当前项目路径
 	public static final String PATH = SystemUtil.getCurrentDir();	

@@ -9,7 +9,9 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -31,6 +33,8 @@ import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * 已成交的订单列表
@@ -49,7 +53,7 @@ public class FinishOrderListJframe extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					NotFinishOrderListJframe frame = new NotFinishOrderListJframe();
+					FinishOrderListJframe frame = new FinishOrderListJframe();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -94,6 +98,31 @@ public class FinishOrderListJframe extends JFrame {
 		
 		model = new DefaultTableModel(vData, vName){};
 		table = new JTable();
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent evt) {
+				//通过点击位置找到点击为表格中的行
+	            int focusedRowIndex = table.rowAtPoint(evt.getPoint());
+	            if (focusedRowIndex == -1) {
+	                return;
+	            }
+	            //将表格所选项设为当前右键点击的行
+	            table.setRowSelectionInterval(focusedRowIndex, focusedRowIndex);
+	            
+	            //弹出菜单
+	            JPopupMenu menu = new JPopupMenu();
+	            JMenuItem delMenItem = new JMenuItem();
+	            delMenItem.setText("  删除  ");
+	            delMenItem.addActionListener(new java.awt.event.ActionListener() {
+	                public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                    //该操作需要做的事
+	                }
+	            });
+	            menu.add(delMenItem);
+	            menu.show(table, evt.getX(), evt.getY());
+	            
+			}
+		});
 		table.setModel(model);
 		RowSorter<TableModel> rowSorter = new TableRowSorter<TableModel>(model);
         table.setRowSorter(rowSorter);

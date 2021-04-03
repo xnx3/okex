@@ -12,7 +12,6 @@ import net.sf.json.JSONObject;
 public class KItemBean {
 	private Candle calde;	//接口返回的原始数据
 	private boolean youxiao;	//判断这组数据，有没有成交量,依据是判断成交的价格是否是大于0.5USTD。true是有效
-	private double avgPrice;	//产生实际交易的平均价格
 	private double zhangdie;	//涨跌情况，涨就是 + ，跌就是-    不涨不跌就是0。 比如原本3，涨到了3.3，那这里就是 +0.3
 	private double jiaoyiUsdt;	//这个时间段产生交易的金额，这里全部单位都是换算为了 USDT
 	
@@ -39,12 +38,6 @@ public class KItemBean {
 	}
 	public void setJiaoyiUsdt(double jiaoyiUsdt) {
 		this.jiaoyiUsdt = jiaoyiUsdt;
-	}
-	public double getAvgPrice() {
-		return avgPrice;
-	}
-	public void setAvgPrice(double avgPrice) {
-		this.avgPrice = avgPrice;
 	}
 	public String toString() {
 		return JSONObject.fromObject(this).toString();

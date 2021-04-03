@@ -35,8 +35,29 @@ public class KLine {
 		Global.OKEX_DOMAIN = "https://www.okex.win";
 		
 //		String instId = "PMA-BTC";
-		String instId = "HYC-USDT";
-		KBuyBean kBuyBean = executeBuy("PMA-BTC",60);
+//		String instId = "HYC-USDT";
+//		String instId = "XPO-USDT";
+//		String instId = "DOGE-USDT";
+//		KBuyBean kBuyBean = executeBuy("KCASH-USDT",60);	//不大对
+		
+//		KBuyBean kBuyBean = executeBuy("XRP-USDT",30);		//待观察，波动不明显
+		
+//		KBuyBean kBuyBean = executeBuy("PLG-USDT",15);		//2月份暴涨的，有风险
+//		KBuyBean kBuyBean = executeBuy("INT-USDT",60);		//涨了，待观察
+//		KBuyBean kBuyBean = executeBuy("ACT-USDT",30);		//波动规律不明显
+		
+
+//		KBuyBean kBuyBean = executeBuy("XSR-USDT",30);		//波动没什么规律，但降了后要买进
+		
+		KBuyBean kBuyBean = executeBuy("XUC-USDT",30);
+//		KBuyBean kBuyBean = executeBuy("PMA-BTC",30);
+//		KBuyBean kBuyBean = executeBuy("TOPC-USDT",15);		//利润率最大 5%
+//		KBuyBean kBuyBean = executeBuy("ROAD-USDT",15);		//波动算正常，但还没到最低点,等最低点
+//		KBuyBean kBuyBean = executeBuy("DNA-USDT",30);		//波动没什么规律，等最低点
+		
+		
+		
+		
 		//计算这100次数据中，价格高峰跟低谷的间隔数
 		double priceJiange = kBuyBean.getMaxPrice() - kBuyBean.getMinPrice();
 		System.out.println("priceJiange:"+priceJiange);
@@ -60,32 +81,32 @@ public class KLine {
 //		System.out.println("erfen_shang："+erfen_shang+",  erfen_xia:"+erfen_xia);
 		
 		
-		for (int i = 0; i < kBuyBean.getList().size(); i++) {
-			KItemBean item = kBuyBean.getList().get(i);
-			
-			/*** 输出柱状图 **/
-			
-			if(item.getAvgPrice() < 0){
-				//无交易数据
-			}else{
-				double priceBaifenbi = ((item.getAvgPrice() - kBuyBean.getMinPrice())/priceJiange);  
-				if(priceBaifenbi > 1){
-					System.out.println(item.toString()+", "+kBuyBean.getMaxPrice() +", "+kBuyBean.getMinPrice());
-				}
-				try {
-					System.out.println(printLine(priceBaifenbi)+" "+item.getAvgPrice()+"\t"+DateUtil.dateFormat(item.getCalde().getTime(), "hh:mm:ss")+"\t"+item.getJiaoyiUsdt()+"USDT"+", \t"+item.toString());
-				} catch (NotReturnValueException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+//		for (int i = 0; i < kBuyBean.getList().size(); i++) {
+//			KItemBean item = kBuyBean.getList().get(i);
+//			
+//			/*** 输出柱状图 **/
+//			
+//			if(item.getAvgPrice() < 0){
+//				//无交易数据
+//			}else{
+//				double priceBaifenbi = ((item.getAvgPrice() - kBuyBean.getMinPrice())/priceJiange);  
+//				if(priceBaifenbi > 1){
+//					System.out.println(item.toString()+", "+kBuyBean.getMaxPrice() +", "+kBuyBean.getMinPrice());
+//				}
+//				try {
+//					System.out.println(printLine(priceBaifenbi)+" "+item.getAvgPrice()+"\t"+DateUtil.dateFormat(item.getCalde().getTime(), "hh:mm:ss")+"\t"+item.getJiaoyiUsdt()+"USDT"+", \t"+item.toString());
+//				} catch (NotReturnValueException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}
 		
 //		JSONArray allHangqing = Ticker.allHangqing();
 //		for (int i = 0; i < allHangqing.size(); i++) {
 //			String instId = allHangqing.getJSONObject(i).getString("instId");
 //			String moneyName = InstUtil.getPriceName(instId);
 //			if(moneyName.equals("USDK") || moneyName.equals("USDT") || moneyName.equals("BTC")){
-//				isDigu(instId);
+//				isDigu(instId, 60, 0.2);
 //				try {
 //					Thread.sleep(300);
 //				} catch (InterruptedException e) {
@@ -99,51 +120,66 @@ public class KLine {
 	}
 	
 	
-	//判断某个币是否到了低谷，可以买了
-	public static void isDigu(String instId){
-		KBuyBean kBuyBean = executeBuy(instId,1);
+	/**
+	 * 判断某个币是否到了低谷，可以买了
+	 * @param instId 传入如 PMA-USDT
+	 * @param time 传入值有 1:1分、5:5分、15、30、60
+	 * 			60：1小时
+	 * 			120 2小时
+	 * 			240	4小时
+	 * 			720	12小时
+	 * 			1440 24小时
+	 * @param chenggongjilv 成功几率，0.1 就比 0.1 高，不要超过1，取值0.1 ~ 1
+	 * @return 适合买入了，就返回true
+	 */
+	public static boolean isDigu(String instId, int time, double chenggongjilv){
+		KBuyBean kBuyBean = executeBuy(instId,time);
 		//计算这100次数据中，价格高峰跟低谷的间隔数
 		double priceJiange = kBuyBean.getMaxPrice() - kBuyBean.getMinPrice();
 		
 		//当前最新的价格
 		KItemBean item = kBuyBean.getList().get(0);
-		double priceBaifenbi = ((item.getAvgPrice() - kBuyBean.getMinPrice())/priceJiange);
+		double priceBaifenbi = ((item.getCalde().getMinPrice() - kBuyBean.getMinPrice())/priceJiange);
 		
-		if(priceBaifenbi < 0.1){
-			System.out.println("============符合低价："+priceBaifenbi+", "+instId);
+		//距离当前最久，也就是最往前的那个价格
+		KItemBean startKItemBean = kBuyBean.getList().get(kBuyBean.getList().size()-1);
+		double startPriceBaifenbi = ((startKItemBean.getCalde().getMinPrice() - kBuyBean.getMinPrice())/priceJiange);
+		
+		//三分之一处的价格
+		KItemBean sanyiKItemBean = kBuyBean.getList().get(kBuyBean.getList().size()/3);
+		double sanyiPriceBaifenbi = ((sanyiKItemBean.getCalde().getMinPrice() - kBuyBean.getMinPrice())/priceJiange);
+		
+		//三分之二处的价格
+		KItemBean sanerKItemBean = kBuyBean.getList().get((kBuyBean.getList().size()/3)*2);
+		double sanerPriceBaifenbi = ((sanerKItemBean.getCalde().getMinPrice() - kBuyBean.getMinPrice())/priceJiange);
+//		System.out.println("--- "+startPriceBaifenbi+" - "+sanyiPriceBaifenbi+" - "+sanerPriceBaifenbi+" - "+priceBaifenbi);
+		
+		//判断是不是直线往下跌的
+		if(startPriceBaifenbi > sanyiPriceBaifenbi && sanyiPriceBaifenbi > sanerPriceBaifenbi && sanerPriceBaifenbi > priceBaifenbi){
+			//直线下跌的，不要
+			return false;
 		}else{
-			System.out.println(instId+":"+priceBaifenbi);
+			//不是直线下跌的，才有价值
+			if(priceBaifenbi < chenggongjilv){
+				System.out.println("============符合低价："+priceBaifenbi+", "+instId);
+				return true;
+			}
 		}
-		
+		return false;
 	}
 	
 	/**
 	 * 买入点的K线分析
-	 * @param instId 传入如 PMA-USDT
-	 * @param time 传入值有 1:1分、5:5分、15、30、60
-	 * 			60：1小时
-	 * 			120 2小时
 	 * 			
 	 * @return 
 	 */
 	public static KBuyBean executeBuy(String instId, int time){
 		KBuyBean kBuyBean = new KBuyBean();
 		String moneyName = InstUtil.getPriceName(instId).toUpperCase();	//获取货币的种类，这里获取的是后面的如USTD
-		String timeStr = "";
-		switch (time) {
-		case 120:
-			timeStr="2H";
-			break;
-		case 60:
-			timeStr="1H";
-			break;
-		default:
-			timeStr = time+"m";
-			break;
-		}
+		
 		
 		//从接口取数据出来
-		List<Candle> list = Market.candles(instId,timeStr);
+		List<Candle> list = Market.candles(instId,intToStringTime(time));
 		
 		/**** 1. 计算这个阶段总的交易量，购买目标货币的交易量，如 PMA-USDK，这里计算出的量就是PMA的交易量 ****/
 		double allJiaoyiliang = 0;
@@ -200,33 +236,12 @@ public class KLine {
 			kItemBean.setJiaoyiUsdt(jiaoyiMoney);
 			
 			
-			/***** 计算实际产生交易的平均价格 ****/
-			if(kItemBean.isYouxiao()){
-				//有效，那就计算
-				//根据数量，先计算如果是最高值，一共是多少钱
-				double avg = c.getMoney()/c.getNumber();
-//				
-				//中间数一定不能超过这个item的最大值与最小值
-				if(avg > c.getMaxPrice()){
-					avg = c.getMaxPrice();
-				}else if(avg < c.getMinPrice()){
-					avg = c.getMinPrice();
-				}else{
-					//正常
-				}
-				kItemBean.setAvgPrice(avg);
-			}else{
-				//无效，那就用-1
-				kItemBean.setAvgPrice(-1);
-			}
-			
-			
-			/* 筛选最大值最小值，只有有效交易量的才会被筛选中 */
+			/* 筛选buy的最大值最小值，只有有效交易量的才会被筛选中 */
 			if(youxiao){
-				if(kItemBean.getAvgPrice() > currentMaxPrice){
-					currentMaxPrice = kItemBean.getAvgPrice();
-				}else if(kItemBean.getAvgPrice() < currentMinPrice){
-					currentMinPrice = kItemBean.getAvgPrice();
+				if(kItemBean.getCalde().getMinPrice() > currentMaxPrice){
+					currentMaxPrice = kItemBean.getCalde().getMinPrice();
+				}else if(kItemBean.getCalde().getMinPrice() < currentMinPrice){
+					currentMinPrice = kItemBean.getCalde().getMinPrice();
 				}
 			}
 			
@@ -253,4 +268,38 @@ public class KLine {
 		return kBuyBean;
 	}
 	
+	/**
+	 * 将int分钟数转为小时的
+	 * @param instId 传入如 PMA-USDT
+	 * @param time 传入值有 1:1分、5:5分、15、30、60
+	 * 			60：1小时
+	 * 			120 2小时
+	 * 			240	4小时
+	 * 			720	12小时
+	 * 			1440 24小时
+	 */
+	public static String intToStringTime(int time){
+		String timeStr = "";
+		switch (time) {
+		case 1440:
+			timeStr="24H";
+			break;
+		case 720:
+			timeStr="12H";
+			break;
+		case 240:
+			timeStr="4H";
+			break;
+		case 120:
+			timeStr="2H";
+			break;
+		case 60:
+			timeStr="1H";
+			break;
+		default:
+			timeStr = time+"m";
+			break;
+		}
+		return timeStr;
+	}
 }

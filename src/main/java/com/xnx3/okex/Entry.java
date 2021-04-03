@@ -1,5 +1,6 @@
 package com.xnx3.okex;
 
+import com.xnx3.okex.suanfa.FindZuidi;
 import com.xnx3.okex.thread.DomainChange;
 import com.xnx3.okex.thread.FinishOrder;
 import com.xnx3.okex.thread.NotFinishOrder;
@@ -30,6 +31,20 @@ public class Entry {
 				
 //				new NotFinishOrder().start(); //进行中的订单监控
 				new FinishOrder().start(); //订单完成监控
+			}
+		}).start();
+		
+		
+		new Thread(new Runnable() {
+			public void run() {
+				FindZuidi.findKemai();
+				try {
+					//给接口切换留出点时间来
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}).start();
 	}
