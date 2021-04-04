@@ -1,6 +1,7 @@
 package com.xnx3.okex.util;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 /**
  * Double的操作
@@ -40,11 +41,11 @@ public class DoubleUtil {
 	 * @return String值
 	 */
 	public static String doubleToString(double value){
-		BigDecimal bd = new BigDecimal(value+"");
-		return bd.toString();
+		DecimalFormat decimalFormat = new DecimalFormat("###################.################");  
+		return decimalFormat.format(value);
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(doubleSplit(1.23));
+		System.out.println(doubleToString(0.0000000000000047));
 	}
 }

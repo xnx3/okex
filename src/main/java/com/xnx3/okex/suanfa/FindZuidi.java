@@ -35,10 +35,10 @@ public class FindZuidi {
 		map.put("XSR-USDT", 30);//波动没什么规律，但降了后要买进
 		
 		for (Map.Entry<String, Integer> entry : map.entrySet()) {
-			boolean mairu = KLine.isDigu(entry.getKey(), entry.getValue(), 0.2);
+			boolean mairu = KLine.isDigu(entry.getKey(), entry.getValue(), 0.1);
 			System.out.println(entry.getKey());
 			if(mairu){
-				TTSUtil.speakByThread("发现低价，快买:"+entry.getKey());
+//				TTSUtil.speakByThread("发现低价，快买:"+entry.getKey());
 				System.out.println("可买入------"+entry.getKey());
 			}
 			

@@ -3,8 +3,10 @@ package com.xnx3.okex.api;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.xnx3.DateUtil;
 import com.xnx3.okex.Global;
 import com.xnx3.okex.bean.Bill;
+import com.xnx3.okex.util.DoubleUtil;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -16,8 +18,9 @@ import net.sf.json.JSONObject;
  */
 public class Trade {
 	public static void main(String[] args) {
-		Global.OKEX_DOMAIN="http://hk.okex.zvo.cn";
-		System.out.println(order("PMA-BTC", "297733752910934016"));
+		System.out.println(order("PMA-BTC", "buy", 1, 0.00000000455));
+//		System.out.println(DoubleUtil.doubleToString(0.0000000047));
+		
 	}
 
 	/**
@@ -44,14 +47,29 @@ public class Trade {
 	/**
 	 * 查询某个订单的详细信息
 	 * @param instId 传入如 PMA-BTC
-	 * @param orderId 订单号，也就是接口的 ordId
+	 * @param side 买入是buy，  卖出是 sell
+	 * @param size 买入或卖出的币的数量，比如操作 PMA-BTC， 这里是PMA的数量
+	 * @param price 价格，单价。 比如 PMA-BTC ，这里的单价就是购买 PMA-BTC的单价，如 0.0000000056
+	 * @return 是否下单成功， true成功
 	 */
-	public static JSONArray order(String instId, String orderId){
-		JSONObject json = com.xnx3.okex.util.HttpsUtil.getLoginRequest("/api/v5/trade/order", "instId="+instId+"&ordId="+orderId);
-		System.out.println("--");
-		System.out.println(json);
-		JSONArray jsonArray = json.getJSONArray("data");
-		return jsonArray;
+	public static boolean order(String instId, String side, double size, double price){
+//		{"instId":"PMA-BTC","tdMode":"cash","_feReq":true,"side":"buy","ordType":"limit","px":"0.00000000453","sz":"1"}
+		
+//		"instId="+instId+"&tdMode=cash&side="+side+"&ordType=limit&sz="+DoubleUtil.doubleToString(size)+"&px="+
+		JSONObject json = new JSONObject();
+		json.put("instId", instId);
+		json.put("tdMode", "cash");
+		json.put("side", side);
+		json.put("ordType", "limit");
+		json.put("sz", DoubleUtil.doubleToString(size));
+		json.put("px", DoubleUtil.doubleToString(price));
+		
+		System.out.println(json.toString());
+		JSONObject responseJson = com.xnx3.okex.util.HttpsUtil.postLoginRequest("/api/v5/trade/order", json.toString()); 
+		JSONArray jsonArray = responseJson.getJSONArray("data");
+		System.out.println(jsonArray);
+		String orderid = jsonArray.getJSONObject(0).getString("ordId");
+		return orderid.length() > 0;
 	}
 	
 }
