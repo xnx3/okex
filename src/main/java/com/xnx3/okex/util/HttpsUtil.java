@@ -146,7 +146,7 @@ public class HttpsUtil{
 		headers.put("OK-ACCESS-KEY", Global.OK_ACCESS_KEY);
 		headers.put("OK-ACCESS-TIMESTAMP", timeS);
 		headers.put("OK-ACCESS-PASSPHRASE", Global.OK_ACCESS_PASSPHRASE);
-		headers.put("Content_Type", "application/json");
+//		headers.put("Content_Type", "application/json");
 		
 		String sign = null;
 		try {

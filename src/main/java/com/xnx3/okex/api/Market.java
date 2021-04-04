@@ -155,7 +155,8 @@ public class Market {
 	
 
 	/**
-	 * 获取某个币的K线
+	 * 获取某个币的买、卖深度，也就是出价的订单
+	 * <p>频率 1s 10次</p>
 	 * @param instId 币，传入如 PMA-USDK
 	 * @param sz 深度档位数量，最大400，即买卖深度共800条。
 	 */
