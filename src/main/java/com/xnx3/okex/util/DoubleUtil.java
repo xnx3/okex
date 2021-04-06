@@ -57,6 +57,18 @@ public class DoubleUtil {
         return b1.add(b2).doubleValue();
 	}
 	
+	/**
+	 * 两个double数相减，精确相加，不会产生乱七八糟的一大长串99999
+	 * @param d1 第一个double
+	 * @param d2 第二个double
+	 * @return 
+	 */
+	public static double subtract(double d1, double d2){
+		BigDecimal b1 = new BigDecimal(Double.toString(d1));
+        BigDecimal b2 = new BigDecimal(Double.toString(d2));
+        return b1.subtract(b2).doubleValue();
+	}
+	
 	public static double lastAddOne(double value){
 		String str = doubleToString(value);
 		int dian = str.indexOf(".");
@@ -80,6 +92,6 @@ public class DoubleUtil {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(lastAddOne(0.000000000471));
+		System.out.println(subtract(0.000023, 0.000023));
 	}
 }

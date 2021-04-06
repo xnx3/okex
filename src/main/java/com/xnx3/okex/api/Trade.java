@@ -18,9 +18,10 @@ import net.sf.json.JSONObject;
  */
 public class Trade {
 	public static void main(String[] args) {
-		System.out.println(order("PMA-BTC", "sell", 1.495, 0.00000000704));
+		//System.out.println(order("PMA-BTC", "sell", 1.495, 0.00000000704));
 //		System.out.println(DoubleUtil.doubleToString(0.0000000047));
-		
+//		System.out.println(cancelOrder("PMA-BTC", "299651603515207680"));
+		System.out.println(order("PMA-BTC", "299635152477646848"));
 	}
 
 	/**
@@ -32,7 +33,11 @@ public class Trade {
 		return jsonArray;
 	}
 	
-	
+	//获取某个订单的信息
+	public static JSONObject order(String instId, String ordId) {
+		JSONObject json = com.xnx3.okex.util.HttpsUtil.getLoginRequest("/api/v5/trade/order","instId="+instId+"&ordId="+ordId);
+		return json.getJSONArray("data").getJSONObject(0);
+	}
 
 	/**
 	 * 历史订单，已完成、且已成交的订单。最近7天的。
@@ -43,9 +48,11 @@ public class Trade {
 		return jsonArray;
 	}
 	
+	
+	
 
 	/**
-	 * 查询某个订单的详细信息
+	 * 创建委托订单，也就是买入、卖出
 	 * @param instId 传入如 PMA-BTC
 	 * @param side 买入是buy，  卖出是 sell
 	 * @param size 买入或卖出的币的数量，比如操作 PMA-BTC， 这里是PMA的数量
@@ -70,4 +77,21 @@ public class Trade {
 		return orderid;
 	}
 	
+	
+	/**
+	 * 撤销订单
+	 * @param instId 传入如 PMA-BTC
+	 * @param ordId 订单id
+	 * @return true 撤销成功
+	 */
+	public static boolean cancelOrder(String instId, String ordId){
+		JSONObject json = new JSONObject();
+		json.put("instId", instId);
+		json.put("ordId", ordId);
+		
+		JSONObject responseJson = com.xnx3.okex.util.HttpsUtil.postLoginRequest("/api/v5/trade/cancel-order", json.toString()); 
+		JSONArray jsonArray = responseJson.getJSONArray("data");
+		System.out.println(jsonArray);
+		return jsonArray.getJSONObject(0).getString("sCode").equals("0");
+	}
 }

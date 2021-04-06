@@ -2,11 +2,15 @@ package com.xnx3.okex.ui;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -77,6 +81,7 @@ public class NotFinishOrderListJframe extends JFrame {
 		
 		Vector vData = new Vector();
 		Vector vName = new Vector();
+		vName.add("订单ID");
 		vName.add("币种");
 		vName.add("单价");
 		vName.add("交易数量");
@@ -90,6 +95,65 @@ public class NotFinishOrderListJframe extends JFrame {
         table.setRowSorter(rowSorter);
 		
 		scrollPane.setViewportView(table);
+		
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent evt) {
+				//通过点击位置找到点击为表格中的行
+	            int focusedRowIndex = table.rowAtPoint(evt.getPoint());
+	            if (focusedRowIndex == -1) {
+	                return;
+	            }
+	            //将表格所选项设为当前右键点击的行
+	            table.setRowSelectionInterval(focusedRowIndex, focusedRowIndex);
+	            
+	            String instId = table.getValueAt(focusedRowIndex, 1).toString();
+	            String print = table.getValueAt(focusedRowIndex, 2).toString();
+	            String ordId = table.getValueAt(focusedRowIndex, 0).toString();
+	            String size = table.getValueAt(focusedRowIndex, 3).toString();	//交易数量
+	            String side = table.getValueAt(focusedRowIndex, 4).toString();
+	            
+	            //弹出菜单
+	            JPopupMenu menu = new JPopupMenu();
+	            
+	            //撤销委托
+	            JMenuItem cancelMenItem = new JMenuItem();
+	            cancelMenItem.setText(" 撤销委托"+instId+": "+print);
+	            cancelMenItem.addActionListener(new java.awt.event.ActionListener() {
+	                public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                    //该操作需要做的事
+	                	if(Trade.cancelOrder("PMA-BTC", ordId)){
+	                		//撤销成功，刷新
+	                		loadJTableData();
+	                	}
+	                }
+	            });
+	            
+	            //持续委托重复下单
+	            JMenuItem repeatMenItem = new JMenuItem();
+	            repeatMenItem.setText(" 重复下单 ");
+	            repeatMenItem.addActionListener(new java.awt.event.ActionListener() {
+	                public void actionPerformed(java.awt.event.ActionEvent evt) {
+	                	ChixuWeituoJframe jframe = new ChixuWeituoJframe();
+	                	jframe.instId = instId;
+	                	jframe.ordId = ordId;
+	                	jframe.price = Double.parseDouble(print);
+	                	jframe.size = Double.parseDouble(size);
+	                	jframe.side = side;
+	                	jframe.setVisible(true);
+	                	
+	                	jframe.loadUIInfo();
+	                }
+	            });
+	            
+	            
+	            menu.add(cancelMenItem);
+	            menu.add(repeatMenItem);
+	            menu.show(table, evt.getX(), evt.getY());
+	            
+			}
+		});
+		
 		
 		new Thread(new Runnable() {
 			public void run() {
@@ -120,10 +184,11 @@ public class NotFinishOrderListJframe extends JFrame {
 		for (int j = 0; j < array.size(); j++) {
 			JSONObject item = array.getJSONObject(j);
 			Vector vRow = new Vector();
+			vRow.add(item.getString("ordId"));
 			vRow.add(item.getString("instId"));
 			vRow.add(item.getString("px"));
 			vRow.add(item.getString("sz"));
-			vRow.add(item.getString("side"));
+			vRow.add(item.getString("side").equalsIgnoreCase("buy")? "买入":"卖出");
 			try {
 				vRow.add(DateUtil.dateFormat(item.getLong("cTime"), "dd HH:mm:ss"));
 			} catch (NotReturnValueException e) {
