@@ -179,7 +179,6 @@ public class Market {
 			pn.setPrice(item.getDouble(0));
 			pn.setNumber(item.getDouble(1));
 			pn.setOrderNumber(item.getInt(3));
-			System.out.println(pn);
 			book.getAsks().add(pn);
 		}
 		
@@ -190,7 +189,6 @@ public class Market {
 			pn.setPrice(item.getDouble(0));
 			pn.setNumber(item.getDouble(1));
 			pn.setOrderNumber(item.getInt(3));
-			System.out.println(pn);
 			book.getBids().add(pn);
 		}
 		

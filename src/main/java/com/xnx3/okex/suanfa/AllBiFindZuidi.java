@@ -23,7 +23,7 @@ public class AllBiFindZuidi {
 			String instId = allHangqing.getJSONObject(i).getString("instId");
 			String moneyName = InstUtil.getPriceName(instId);
 			if(moneyName.equals("USDK") || moneyName.equals("USDT") || moneyName.equals("BTC")){
-				boolean find = KLine.isDigu(instId, 15, 0.1);
+				boolean find = KLine.isDigu(instId, 15, 0.05);
 				if(find){
 					System.out.println(instId);
 				}

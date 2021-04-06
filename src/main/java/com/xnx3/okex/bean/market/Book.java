@@ -9,8 +9,8 @@ import java.util.List;
  *
  */
 public class Book {
-	private List<PriceNumber> asks;
-	private List<PriceNumber> bids; //
+	private List<PriceNumber> asks;	//卖的
+	private List<PriceNumber> bids; //买的
 	
 	public Book() {
 		this.asks = new ArrayList<PriceNumber>();

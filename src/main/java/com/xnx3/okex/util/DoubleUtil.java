@@ -45,7 +45,41 @@ public class DoubleUtil {
 		return decimalFormat.format(value);
 	}
 	
+	/**
+	 * 两个double数相加，精确相加，不会产生乱七八糟的一大长串99999
+	 * @param d1 相加的第一个double 数
+	 * @param d2 相加的第二个double 数
+	 * @return 和
+	 */
+	public static double add(double d1, double d2){
+		BigDecimal b1 = new BigDecimal(Double.toString(d1));
+        BigDecimal b2 = new BigDecimal(Double.toString(d2));
+        return b1.add(b2).doubleValue();
+	}
+	
+	public static double lastAddOne(double value){
+		String str = doubleToString(value);
+		int dian = str.indexOf(".");
+		if(dian == -1){
+			//没有小数点，那省事了
+			
+		}
+		
+		int xiaoshudian_length = str.length() - dian - 1;
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append("0.");
+		for (int i = 0; i < xiaoshudian_length - 1; i++) {
+			sb.append("0");
+		}
+		sb.append("1");
+		double add = Double.parseDouble(sb.toString());
+		
+		//加运算
+		return add(value, add);
+	}
+	
 	public static void main(String[] args) {
-		System.out.println(doubleToString(0.0000000000000047));
+		System.out.println(lastAddOne(0.000000000471));
 	}
 }

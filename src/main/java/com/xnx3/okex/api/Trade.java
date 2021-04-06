@@ -18,7 +18,7 @@ import net.sf.json.JSONObject;
  */
 public class Trade {
 	public static void main(String[] args) {
-		System.out.println(order("PMA-BTC", "buy", 1, 0.00000000455));
+		System.out.println(order("PMA-BTC", "sell", 1.495, 0.00000000704));
 //		System.out.println(DoubleUtil.doubleToString(0.0000000047));
 		
 	}
@@ -50,9 +50,9 @@ public class Trade {
 	 * @param side 买入是buy，  卖出是 sell
 	 * @param size 买入或卖出的币的数量，比如操作 PMA-BTC， 这里是PMA的数量
 	 * @param price 价格，单价。 比如 PMA-BTC ，这里的单价就是购买 PMA-BTC的单价，如 0.0000000056
-	 * @return 是否下单成功， true成功
+	 * @return 创建成功的订单id，如果没成功，那么这里返回null
 	 */
-	public static boolean order(String instId, String side, double size, double price){
+	public static String order(String instId, String side, double size, double price){
 //		{"instId":"PMA-BTC","tdMode":"cash","_feReq":true,"side":"buy","ordType":"limit","px":"0.00000000453","sz":"1"}
 		
 //		"instId="+instId+"&tdMode=cash&side="+side+"&ordType=limit&sz="+DoubleUtil.doubleToString(size)+"&px="+
@@ -64,12 +64,10 @@ public class Trade {
 		json.put("sz", DoubleUtil.doubleToString(size));
 		json.put("px", DoubleUtil.doubleToString(price));
 		
-		System.out.println(json.toString());
 		JSONObject responseJson = com.xnx3.okex.util.HttpsUtil.postLoginRequest("/api/v5/trade/order", json.toString()); 
 		JSONArray jsonArray = responseJson.getJSONArray("data");
-		System.out.println(jsonArray);
 		String orderid = jsonArray.getJSONObject(0).getString("ordId");
-		return orderid.length() > 0;
+		return orderid;
 	}
 	
 }

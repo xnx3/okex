@@ -16,7 +16,8 @@ public class Zhuzhuangtu {
 //		KBuyBean kBuyBean = executeBuy("TOPC-USDT",15);		//利润率最大 5%
 //		KBuyBean kBuyBean = executeBuy("ROAD-USDT",15);		//波动算正常，但还没到最低点,等最低点
 //		KBuyBean kBuyBean = executeBuy("DNA-USDT",30);		//波动没什么规律，等最低点
-		KBuyBean kBuyBean = KLine.executeBuy("SOC-USDT",15);
+//		KBuyBean kBuyBean = KLine.executeBuy("SOC-USDT",15);
+		KBuyBean kBuyBean = KLine.executeBuy("XSR-USDT",1);
 		
 		
 		

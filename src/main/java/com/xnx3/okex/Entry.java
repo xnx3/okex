@@ -13,7 +13,7 @@ import com.xnx3.okex.ui.MainJframe;
  */
 public class Entry {
 	public static void main(String[] args) {
-		new DomainChange().start(); //接口自动切换，自动切换为当前能正常访问通的接口
+//		new DomainChange().start(); //接口自动切换，自动切换为当前能正常访问通的接口
 		
 		MainJframe mainJframe = new MainJframe();
 		mainJframe.setVisible(true);

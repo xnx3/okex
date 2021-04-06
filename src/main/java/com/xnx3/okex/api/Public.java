@@ -3,6 +3,10 @@ package com.xnx3.okex.api;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.xnx3.CacheUtil;
+import com.xnx3.okex.EyeInstId;
+import com.xnx3.okex.bean.Instrument;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -26,11 +30,11 @@ public class Public {
 	}
 	
 	
-	private static Map<String, JSONObject> instrumentMap = null;
 	/**
 	 * 获取所有交易产品基础信息,从缓存中取，不是从接口
 	 */
 	public static Map<String, JSONObject> instruments() {
+		Map<String, JSONObject> instrumentMap = (Map<String, JSONObject>)CacheUtil.get("public:instruments");
 		if(instrumentMap == null){
 			//从接口取
 			JSONArray array = com.xnx3.okex.util.HttpsUtil.getLoginRequest("/api/v5/public/instruments?instType=SPOT", "").getJSONArray("data");
@@ -39,6 +43,8 @@ public class Public {
 				JSONObject json = array.getJSONObject(i);
 				instrumentMap.put(json.getString("instId"), json);
 			}
+			
+			CacheUtil.set("public:instruments", instrumentMap, 3600);	//缓存一小时
 		}
 		return instrumentMap;
 	}
@@ -49,8 +55,9 @@ public class Public {
 	 * @param instId 传入如 PMA-USDT
 	 * @return
 	 */
-	public static JSONObject getInstrument(String instId){
-		return instruments().get(instId);
+	public static Instrument getInstrument(String instId){
+		JSONObject json = instruments().get(instId);
+		return new Instrument(json);
 	}
 	
 	

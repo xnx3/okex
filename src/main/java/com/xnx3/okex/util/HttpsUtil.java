@@ -235,10 +235,10 @@ public class HttpsUtil{
         conn.connect();
 		
 		
-		 OutputStream os = conn.getOutputStream(); 
-		 PrintWriter pw = new PrintWriter(new OutputStreamWriter(os)); 
-		 pw.write(postData); 
-		 pw.close(); 
+//		 OutputStream os = conn.getOutputStream(); 
+//		 PrintWriter pw = new PrintWriter(new OutputStreamWriter(os)); 
+//		 pw.write(postData); 
+//		 pw.close(); 
         
 //		 
 //         OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());

@@ -13,6 +13,11 @@ public class KBuyBean {
 	private double maxPrice;	//最大价格
 	private double minPrice;	//最小价格
 	private double allNumber;	//总交易量，总交易的数量，比如交易的是 PMA-USDT，这里就是交易的PMA的总数量，list中所有数量的和
+	private int youxiaoNumber;		//list中有效的数量，比如btc-usdt肯定就是跟list.size 一样了，有的半死不活的币，就是用这个来进行判断。list中youxiao，那么这里就加一
+	
+	public KBuyBean() {
+		this.youxiaoNumber = 0;
+	}
 	
 	public List<KItemBean> getList() {
 		return list;
@@ -38,10 +43,17 @@ public class KBuyBean {
 	public void setAllNumber(double allNumber) {
 		this.allNumber = allNumber;
 	}
+	
+	public int getYouxiaoNumber() {
+		return youxiaoNumber;
+	}
+	public void setYouxiaoNumber(int youxiaoNumber) {
+		this.youxiaoNumber = youxiaoNumber;
+	}
 	@Override
 	public String toString() {
 		return "KBuyBean [list=" + list + ", maxPrice=" + maxPrice + ", minPrice=" + minPrice + ", allNumber="
-				+ allNumber + "]";
+				+ allNumber + ", youxiaoNumber=" + youxiaoNumber + "]";
 	}
 	
 }

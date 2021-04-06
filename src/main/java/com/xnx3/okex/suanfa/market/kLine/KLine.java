@@ -32,8 +32,6 @@ public class KLine {
 	}
 	
 	public static void main(String[] args) {
-		Global.OKEX_DOMAIN = "https://www.okex.win";
-		
 //		String instId = "PMA-BTC";
 //		String instId = "HYC-USDT";
 //		String instId = "XPO-USDT";
@@ -49,18 +47,23 @@ public class KLine {
 
 //		KBuyBean kBuyBean = executeBuy("XSR-USDT",30);		//波动没什么规律，但降了后要买进
 		
-		KBuyBean kBuyBean = executeBuy("XUC-USDT",30);
-//		KBuyBean kBuyBean = executeBuy("PMA-BTC",30);
+//		KBuyBean kBuyBean = executeBuy("XUC-USDT",30);
+		KBuyBean kBuyBean = executeBuy("PMA-BTC",1);
 //		KBuyBean kBuyBean = executeBuy("TOPC-USDT",15);		//利润率最大 5%
 //		KBuyBean kBuyBean = executeBuy("ROAD-USDT",15);		//波动算正常，但还没到最低点,等最低点
 //		KBuyBean kBuyBean = executeBuy("DNA-USDT",30);		//波动没什么规律，等最低点
 		
-		
-		
+		System.out.println("有效数："+kBuyBean.getYouxiaoNumber());
+		for (int i = 0; i < kBuyBean.getList().size(); i++) {
+			KItemBean item = kBuyBean.getList().get(i);
+			if(item.isYouxiao()){
+				System.out.println(item.toString());
+			}
+		}
 		
 		//计算这100次数据中，价格高峰跟低谷的间隔数
-		double priceJiange = kBuyBean.getMaxPrice() - kBuyBean.getMinPrice();
-		System.out.println("priceJiange:"+priceJiange);
+//		double priceJiange = kBuyBean.getMaxPrice() - kBuyBean.getMinPrice();
+//		System.out.println("priceJiange:"+priceJiange);
 		
 		//以高峰跟低谷的中间数值，二分法来判断，这100个数是否是均匀分布的
 //		double erfen_xia = 0;//下半部分
@@ -134,6 +137,11 @@ public class KLine {
 	 */
 	public static boolean isDigu(String instId, int time, double chenggongjilv){
 		KBuyBean kBuyBean = executeBuy(instId,time);
+		if(kBuyBean.getYouxiaoNumber() < 15){
+			//交易太少
+			return false;
+		}
+		
 		//计算这100次数据中，价格高峰跟低谷的间隔数
 		double priceJiange = kBuyBean.getMaxPrice() - kBuyBean.getMinPrice();
 		
@@ -161,7 +169,7 @@ public class KLine {
 		}else{
 			//不是直线下跌的，才有价值
 			if(priceBaifenbi < chenggongjilv){
-				System.out.println("============符合低价："+priceBaifenbi+", "+instId);
+//				System.out.println("============符合低价："+priceBaifenbi+", "+instId);
 				return true;
 			}
 		}
@@ -245,7 +253,6 @@ public class KLine {
 				}
 			}
 			
-			
 			/** 第二次及以后的数据，跟前面的比对，判断是降了还是升了 **/
 			kItemBean.setZhangdie(c.getMinPrice() - upPrice);
 			upPrice = c.getMinPrice();
@@ -260,6 +267,14 @@ public class KLine {
 			
 			itemList.add(kItemBean);
 		}
+		
+		/**** 计算有效数的个数 ****/
+		for (int i = 0; i < itemList.size(); i++) {
+			if(itemList.get(i).isYouxiao()){
+				kBuyBean.setYouxiaoNumber(kBuyBean.getYouxiaoNumber()+1);
+			}
+		}
+		
 		kBuyBean.setList(itemList);
 		
 		kBuyBean.setMaxPrice(currentMaxPrice);
