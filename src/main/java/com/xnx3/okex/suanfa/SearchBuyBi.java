@@ -100,6 +100,24 @@ public class SearchBuyBi {
 		}
 		
 		System.out.println("搜索完毕，符合240的："+buyList_240min.size());
+		System.out.println("开始搜索1min的");
+		
+		List<String> buyList_1min = new ArrayList<String>();
+		for (int i = 0; i < buyList_240min.size(); i++) {
+			String instId = buyList_240min.get(i);
+
+			boolean find = KLine.isDigu(instId, 240, 0.15);
+			if(find){
+				System.out.println("------1min------"+instId);
+				buyList_1min.add(instId);
+			}
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		
 	}
 	
