@@ -77,12 +77,12 @@ public class ChixuWeituoJframe extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		JLabel lblNewLabel = new JLabel("卖价(最低价)");
+		JLabel lblNewLabel = new JLabel(" 当前卖价(最低价)  >=");
 		
 		sellTextField = new JTextField();
 		sellTextField.setColumns(10);
 		
-		JLabel label = new JLabel("买家(我之外的最高价)");
+		JLabel label = new JLabel("当前买价(我之外的最高价) <=");
 		
 		buyTextField = new JTextField();
 		buyTextField.setColumns(10);
