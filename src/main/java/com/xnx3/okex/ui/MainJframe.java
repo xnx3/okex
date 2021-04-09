@@ -55,7 +55,7 @@ public class MainJframe extends JFrame {
 	 */
 	public MainJframe() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 364);
+		setBounds(100, 100, 450, 391);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -116,6 +116,13 @@ public class MainJframe extends JFrame {
 				new MoneyJframe().setVisible(true);
 			}
 		});
+		
+		JButton btnNewButton = new JButton("暴涨暴跌自动提醒");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new BaozhangBaodieJianceJframe().setVisible(true);
+			}
+		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -138,9 +145,12 @@ public class MainJframe extends JFrame {
 								.addComponent(panel, GroupLayout.PREFERRED_SIZE, 394, GroupLayout.PREFERRED_SIZE)
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addGap(6)
-									.addComponent(button_2)
-									.addGap(18)
-									.addComponent(button_4)))))
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 189, GroupLayout.PREFERRED_SIZE)
+										.addGroup(gl_contentPane.createSequentialGroup()
+											.addComponent(button_2)
+											.addGap(18)
+											.addComponent(button_4)))))))
 					.addContainerGap(34, Short.MAX_VALUE))
 		);
 		gl_contentPane.setVerticalGroup(
@@ -161,7 +171,9 @@ public class MainJframe extends JFrame {
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(button_2)
 						.addComponent(button_4))
-					.addContainerGap(30, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnNewButton)
+					.addContainerGap(22, Short.MAX_VALUE))
 		);
 		
 		JButton btnBtm = new JButton("PMA_BTC 转 USDK");
