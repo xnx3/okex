@@ -89,7 +89,7 @@ public class BaozhangBaodieJianceJframe extends JFrame {
 							
 							try {
 								//每5秒检测一次
-								Thread.sleep(3000);
+								Thread.sleep(5000);
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}

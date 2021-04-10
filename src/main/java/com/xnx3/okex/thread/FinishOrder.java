@@ -85,7 +85,7 @@ public class FinishOrder extends Thread{
 					
 					try {
 						//加点延迟
-						Thread.sleep(6*1000);
+						Thread.sleep(2*1000);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

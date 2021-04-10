@@ -66,7 +66,6 @@ public class BaozhangBaodie {
 		PriceNumber sellPn_up = upBook.getAsks().get(0);
 		//判断卖的是否差价比较大
 		double zhangfu = (sellPn_up.getPrice() - sellPn.getPrice())/sellPn.getPrice();	//涨幅百分比
-		System.out.println("涨幅："+zhangfu);
 		if(zhangfu > baifenbi){
 			System.out.println("暴涨！涨幅："+DoubleUtil.doubleToString(zhangfu));
 			TTSUtil.speakByThread("暴涨，"+instId);
@@ -83,7 +82,6 @@ public class BaozhangBaodie {
 			TTSUtil.speakByThread("暴跌，"+instId);
 		}
 		
-		System.out.println("卖的："+sellPn+",   买的:"+buyPn);
 		
 		//缓存最新数据
 		bookMap.put(instId, book);
