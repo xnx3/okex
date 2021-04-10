@@ -39,7 +39,6 @@ public class Ticker {
 	//所有产品行情
 	public static JSONArray allHangqing() {
 		JSONObject json = com.xnx3.okex.util.HttpsUtil.get("/api/v5/market/tickers?instType=SPOT");
-		System.out.println(json);
 		return json.getJSONArray("data");
 	}
 	

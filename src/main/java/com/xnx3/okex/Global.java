@@ -1,8 +1,31 @@
 package com.xnx3.okex;
 
-import com.xnx3.SystemUtil;
+import java.io.File;
 
+import com.xnx3.okex.util.SystemUtil;
+
+/**
+ * 全局
+ * @author 管雷鸣
+ *
+ */
 public class Global {
+	public static final String CONFIG_PATH;	//配置文件所在的文件夹
+	static{
+		//判断当前系统是否是mac
+		if(SystemUtil.isMacOS()){
+			//是mac
+			CONFIG_PATH = System.getProperty("user.home")+File.separator+"yunbackups"+File.separator+"config"+File.separator;	//配置文件所在的文件夹
+		}else {
+			CONFIG_PATH = SystemUtil.getCurrentDir()+File.separator+"config"+File.separator;	//配置文件所在的文件夹
+		}
+		//如果配置文件目录不存在，那么自动创建
+		File file = new File(CONFIG_PATH);
+		if(!file.exists()){
+			file.mkdirs();
+		}
+	}
+	
 	
 	//OKEX接口的域名
 	public static String OKEX_DOMAIN = "https://www.okex.win";
@@ -10,8 +33,9 @@ public class Global {
 	//当前项目路径
 	public static final String PATH = SystemUtil.getCurrentDir();	
 	
-	public static String OK_ACCESS_KEY = "221bd9dd-d9ab-48c4-bc7e-8a02d55b8d05";
-	public static String OK_ACCESS_PASSPHRASE = "passphrase3o8fygfy3o8qyg4";
-	public static String OK_ACCESS_SECRET_KEY = "0532364D772A3708F8BD7E56B8BE65F8";
+	//从 okex.config 自动加载
+	public static String OK_ACCESS_KEY = null;
+	public static String OK_ACCESS_PASSPHRASE = null;
+	public static String OK_ACCESS_SECRET_KEY = null;
 	
 }

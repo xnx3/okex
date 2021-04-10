@@ -123,6 +123,20 @@ public class MainJframe extends JFrame {
 				new BaozhangBaodieJianceJframe().setVisible(true);
 			}
 		});
+		
+		JButton btnNewButton_1 = new JButton("自动搜索当前低价的币");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new SearchBuyDijiaBiJframe().setVisible(true);
+			}
+		});
+		
+		JButton btnOkex = new JButton("Okex参数设置");
+		btnOkex.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new OkexSetJframe().setVisible(true);
+			}
+		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -146,11 +160,17 @@ public class MainJframe extends JFrame {
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addGap(6)
 									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-										.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 189, GroupLayout.PREFERRED_SIZE)
+										.addGroup(gl_contentPane.createSequentialGroup()
+											.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 189, GroupLayout.PREFERRED_SIZE)
+											.addGap(18)
+											.addComponent(btnNewButton_1))
 										.addGroup(gl_contentPane.createSequentialGroup()
 											.addComponent(button_2)
 											.addGap(18)
-											.addComponent(button_4)))))))
+											.addComponent(button_4))))))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(btnOkex)))
 					.addContainerGap(34, Short.MAX_VALUE))
 		);
 		gl_contentPane.setVerticalGroup(
@@ -161,7 +181,9 @@ public class MainJframe extends JFrame {
 						.addComponent(label)
 						.addComponent(requestEndpointComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(button))
-					.addGap(53)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnOkex)
+					.addGap(18)
 					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
 					.addGap(18)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
@@ -172,7 +194,9 @@ public class MainJframe extends JFrame {
 						.addComponent(button_2)
 						.addComponent(button_4))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btnNewButton)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnNewButton)
+						.addComponent(btnNewButton_1))
 					.addContainerGap(22, Short.MAX_VALUE))
 		);
 		
