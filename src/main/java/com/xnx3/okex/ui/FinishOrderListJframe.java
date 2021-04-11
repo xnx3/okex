@@ -109,13 +109,25 @@ public class FinishOrderListJframe extends JFrame {
 	            //将表格所选项设为当前右键点击的行
 	            table.setRowSelectionInterval(focusedRowIndex, focusedRowIndex);
 	            
+	            String instId = table.getValueAt(focusedRowIndex, 0).toString();
+	            String print = table.getValueAt(focusedRowIndex, 1).toString();
+	            //将单价转化为Double，在转化为string
+	            print = DoubleUtil.doubleToString(Double.parseDouble(print));
+	            
+	            String size = table.getValueAt(focusedRowIndex, 2).toString();	//交易数量
+	            //将
+	            
 	            //弹出菜单
 	            JPopupMenu menu = new JPopupMenu();
 	            JMenuItem delMenItem = new JMenuItem();
-	            delMenItem.setText("  删除  ");
+	            delMenItem.setText("计划委托");
 	            delMenItem.addActionListener(new java.awt.event.ActionListener() {
 	                public void actionPerformed(java.awt.event.ActionEvent evt) {
 	                    //该操作需要做的事
+	                	EditJiHuaWeiTuoJframe jihua = new EditJiHuaWeiTuoJframe();
+	                	
+	                	
+	                	
 	                }
 	            });
 	            menu.add(delMenItem);

@@ -15,7 +15,7 @@ public class Global {
 		//判断当前系统是否是mac
 		if(SystemUtil.isMacOS()){
 			//是mac
-			CONFIG_PATH = System.getProperty("user.home")+File.separator+"yunbackups"+File.separator+"config"+File.separator;	//配置文件所在的文件夹
+			CONFIG_PATH = System.getProperty("user.home")+File.separator+"okex"+File.separator+"config"+File.separator;	//配置文件所在的文件夹
 		}else {
 			CONFIG_PATH = SystemUtil.getCurrentDir()+File.separator+"config"+File.separator;	//配置文件所在的文件夹
 		}

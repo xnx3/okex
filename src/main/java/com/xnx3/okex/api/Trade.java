@@ -49,6 +49,17 @@ public class Trade {
 	}
 	
 	
+	/**
+	 * 创建委托订单，也就是买入、卖出
+	 * @param instId 传入如 PMA-BTC
+	 * @param side 买入是buy，  卖出是 sell
+	 * @param size 买入或卖出的币的数量，比如操作 PMA-BTC， 这里是PMA的数量
+	 * @param price 价格，单价。 比如 PMA-BTC ，这里的单价就是购买 PMA-BTC的单价，如 0.0000000056
+	 * @return 创建成功的订单id，如果没成功，那么这里返回null
+	 */
+	public static String createOrder(String instId, String side, double size, double price){
+		return order(instId, side, size, price);
+	}
 	
 
 	/**
@@ -58,6 +69,7 @@ public class Trade {
 	 * @param size 买入或卖出的币的数量，比如操作 PMA-BTC， 这里是PMA的数量
 	 * @param price 价格，单价。 比如 PMA-BTC ，这里的单价就是购买 PMA-BTC的单价，如 0.0000000056
 	 * @return 创建成功的订单id，如果没成功，那么这里返回null
+	 * @deprecated 请使用 createOrder(...)
 	 */
 	public static String order(String instId, String side, double size, double price){
 //		{"instId":"PMA-BTC","tdMode":"cash","_feReq":true,"side":"buy","ordType":"limit","px":"0.00000000453","sz":"1"}

@@ -137,6 +137,13 @@ public class MainJframe extends JFrame {
 				new OkexSetJframe().setVisible(true);
 			}
 		});
+		
+		JButton button_5 = new JButton("计划委托自动下单");
+		button_5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new EditJiHuaWeiTuoJframe().setVisible(true);
+			}
+		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -167,11 +174,13 @@ public class MainJframe extends JFrame {
 										.addGroup(gl_contentPane.createSequentialGroup()
 											.addComponent(button_2)
 											.addGap(18)
-											.addComponent(button_4))))))
+											.addComponent(button_4)
+											.addPreferredGap(ComponentPlacement.UNRELATED)
+											.addComponent(button_5, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))))))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addContainerGap()
 							.addComponent(btnOkex)))
-					.addContainerGap(34, Short.MAX_VALUE))
+					.addContainerGap(25, Short.MAX_VALUE))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -192,7 +201,8 @@ public class MainJframe extends JFrame {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(button_2)
-						.addComponent(button_4))
+						.addComponent(button_4)
+						.addComponent(button_5))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnNewButton)
