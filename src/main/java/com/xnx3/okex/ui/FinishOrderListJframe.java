@@ -19,6 +19,7 @@ import javax.swing.table.TableRowSorter;
 
 import com.xnx3.DateUtil;
 import com.xnx3.exception.NotReturnValueException;
+import com.xnx3.okex.api.Public;
 import com.xnx3.okex.api.Trade;
 import com.xnx3.okex.bean.trade.Order;
 import com.xnx3.okex.thread.FinishOrder;
@@ -126,8 +127,20 @@ public class FinishOrderListJframe extends JFrame {
 	                    //该操作需要做的事
 	                	EditJiHuaWeiTuoJframe jihua = new EditJiHuaWeiTuoJframe();
 	                	
+	                	//instid
+	                	String instId = table.getValueAt(focusedRowIndex, 0).toString();
+	                	jihua.getInstIdTextField().setText(instId);
 	                	
+	                	//价格
+	                	String print = table.getValueAt(focusedRowIndex, 1).toString();
+	    	            //将单价转化为Double，在转化为string
+	    	            print = DoubleUtil.doubleToString(Double.parseDouble(print));
+	                	jihua.getPriceTextField().setText(print);
 	                	
+	                	//最小买入数量
+	                	jihua.getNumberTextField().setText(DoubleUtil.doubleToString(Public.getInstrument(instId).getMinSize()));
+	                	
+	                	jihua.setVisible(true);
 	                }
 	            });
 	            menu.add(delMenItem);
