@@ -1,8 +1,5 @@
 package com.xnx3.okex.util;
 
-import com.okcoin.commons.okex.open.api.constant.APIConstants;
-import com.okcoin.commons.okex.open.api.enums.AlgorithmEnum;
-import com.okcoin.commons.okex.open.api.enums.CharsetEnum;
 import org.apache.commons.lang3.StringUtils;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -42,7 +39,7 @@ public class HmacSHA256Base64Utils {
                               String queryString, String body, String secretKey)
             throws CloneNotSupportedException, InvalidKeyException, UnsupportedEncodingException {
         if (StringUtils.isEmpty(secretKey) || StringUtils.isEmpty(method)) {
-            return APIConstants.EMPTY;
+            return "secretKey、method 不可为空";
         }
 
         String preHash = preHash(timestamp, method, requestPath, queryString, body);
@@ -74,7 +71,7 @@ public class HmacSHA256Base64Utils {
         //get方法
         if (StringUtils.isNotEmpty(queryString)) {
             //在queryString前面拼接上？
-            preHash.append(APIConstants.QUESTION).append(queryString);
+            preHash.append("?").append(queryString);
             //改动了
             //preHash.append(queryString);
         }
@@ -93,5 +90,37 @@ public class HmacSHA256Base64Utils {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeErrorException(new Error("Can't get Mac's instance."));
         }
+    }
+}
+
+enum AlgorithmEnum {
+
+    HMAC_SHA256("HmacSHA256"),
+    MD5("MD5"),;
+
+    private String algorithm;
+
+    AlgorithmEnum(String algorithm) {
+        this.algorithm = algorithm;
+    }
+
+    public String algorithm() {
+        return algorithm;
+    }
+}
+enum CharsetEnum {
+
+    UTF_8("UTF-8"),
+    ISO_8859_1("ISO-8859-1"),;
+
+
+    private String charset;
+
+    CharsetEnum(String charset) {
+        this.charset = charset;
+    }
+
+    public String charset() {
+        return charset;
     }
 }

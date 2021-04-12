@@ -7,11 +7,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.xnx3.DateUtil;
+import com.xnx3.Lang;
 import com.xnx3.media.TTSUtil;
 import com.xnx3.okex.api.Market;
 import com.xnx3.okex.api.Trade;
 import com.xnx3.okex.bean.market.Book;
 import com.xnx3.okex.bean.market.PriceNumber;
+import com.xnx3.okex.bean.trade.Jihuaweituo;
+import com.xnx3.okex.util.DB;
+import com.xnx3.okex.util.DoubleUtil;
 import com.xnx3.swing.DialogUtil;
 
 import net.sf.json.JSONObject;
@@ -25,12 +30,15 @@ import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.awt.event.ActionEvent;
 
 /**
  * 计划委托的设置
  */
 public class EditJiHuaWeiTuoJframe extends JFrame {
+	public String jihuaweituoId = null;	//当前是否是编辑，如果是编辑，那么这里是有值的，如果是新增，这里没有值
+	
 	public EditJiHuaWeiTuoJframe() {
 		setBounds(100, 100, 546, 315);
 		setTitle("计划委托-自动委托");
@@ -65,91 +73,56 @@ public class EditJiHuaWeiTuoJframe extends JFrame {
 		saveBtnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				new Thread(new Runnable() {
-					public void run() {
-						String instId = getInstIdTextField().getText();
-						int dayuxiaoyu = dayuxiaoyuComboBox.getSelectedIndex();	// 0是低于，1是大于
-						String side = sideComboBox.getSelectedIndex() == 0? "buy":"sell";
-						double number = Double.parseDouble(numberTextField.getText());	//买入或卖出数量
-						double price = Double.parseDouble(priceTextField.getText());	//单价
-						
-						if(side.equals("buy")){
-							//买入
-							
-							//既然是买入，肯定是按照价格低了买，判断设置的是不是按照低于来设置的
-							if(dayuxiaoyu == 1){
-								DialogUtil.showMessageDialog("你设置的是自动买入，但你设置的是大于多少时买入！应该是小于多少时自动买入吧？");
-								return;
-							}
-							
-						}else{
-							//卖出
-							
-							//既然是卖出，肯定是按照价格高了卖，判断设置的是不是按照高于来设置的
-							if(dayuxiaoyu == 0){
-								DialogUtil.showMessageDialog("你设置的是自动卖出，但你设置的是小于多少时卖出！应该是大于多少时自动卖出吧？");
-								return;
-							}
-						}
-						
-						saveBtnNewButton.setEnabled(false);
-						saveBtnNewButton.setText("执行中...要停止可结束软件");
-						
-						while(true){
-							//拉取当前最新价格
-							Book book = Market.books(instId, 5);
-							
-							if(side.equals("buy")){
-								//买入
-								//判断当前买的最高价
-								PriceNumber pn = book.getBids().get(0);
-								if(pn.getPrice() <= price){
-									//价格合适，自动买入
-									
-									TTSUtil.speakByThread("自动委托，"+instId+"，价格:"+price+",已自动下单完毕");
-									String orderId = Trade.createOrder(instId, side, number, price);
-									if(orderId == null || orderId.length() < 2){
-										//创建订单失败
-									}else{
-										//创建订单成功后，跟踪，15分钟内没有成交，那么自动撤销
-										new Thread(new Runnable() {
-											public void run() {
-												try {
-													Thread.sleep(15*60*1000);
-												} catch (InterruptedException e) {
-													e.printStackTrace();
-												}
-												
-												//如果未成交自动取消委托
-												JSONObject orderJson = Trade.order(instId, orderId);
-												if(!orderJson.getString("state").equals("filled")){
-													//只要没有完全成交，那都撤销订单
-													Trade.cancelOrder(instId, orderId);
-													TTSUtil.speakByThread(instId+"超时未成交，已自动撤销委托。单价："+price);
-												}
-											}
-										}).start();
-									}
-									
-									saveBtnNewButton.setText("已触发自动委托。");
-									return;
-								}
-							}else{
-								//卖出
-								
-							}
-							
-							
-							//每3秒监控一次
-							try {
-								Thread.sleep(3*1000);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
-						}
-						
+				String instId = getInstIdTextField().getText();
+				int dayuxiaoyu = dayuxiaoyuComboBox.getSelectedIndex();	// 0是低于，1是大于
+				String side = sideComboBox.getSelectedIndex() == 0? "buy":"sell";
+				double number = Double.parseDouble(numberTextField.getText());	//买入或卖出数量
+				double price = Double.parseDouble(priceTextField.getText());	//单价
+				
+				if(side.equals("buy")){
+					//买入
+					
+					//既然是买入，肯定是按照价格低了买，判断设置的是不是按照低于来设置的
+					if(dayuxiaoyu == 1){
+						DialogUtil.showMessageDialog("你设置的是自动买入，但你设置的是大于多少时买入！应该是小于多少时自动买入吧？");
+						return;
 					}
-				}).start();
+					
+				}else{
+					//卖出
+					
+					//既然是卖出，肯定是按照价格高了卖，判断设置的是不是按照高于来设置的
+					if(dayuxiaoyu == 0){
+						DialogUtil.showMessageDialog("你设置的是自动卖出，但你设置的是小于多少时卖出！应该是大于多少时自动卖出吧？");
+						return;
+					}
+				}
+				
+				Jihuaweituo weituo = new Jihuaweituo();
+				weituo.setInstId(instId);
+				weituo.setPrice(price);
+				weituo.setRunstate(0);
+				weituo.setSide(side);
+				weituo.setSize(number);
+				weituo.setValidtime(DateUtil.timeForUnix10());
+				if(jihuaweituoId == null){
+					//新增
+					weituo.setId(Lang.uuid());
+					DB.getDatabase().insert(weituo);
+				}else{
+					//修改
+					String updateSql = "update jihuaweituo set "
+							+ "instId = '"+weituo.getInstId()+"', "
+							+ "price = "+weituo.getPrice()+","
+							+ "side = '"+weituo.getSide()+"', "
+							+ "size = "+weituo.getSize()+" "
+							+ "WHERE id='"+jihuaweituoId+"'";
+					System.out.println(updateSql);
+					DB.getDatabase().update(updateSql);
+				}
+				
+				//关闭
+				setVisible(false);
 				
 			}
 		});
@@ -218,6 +191,7 @@ public class EditJiHuaWeiTuoJframe extends JFrame {
 					.addGap(42))
 		);
 		getContentPane().setLayout(groupLayout);
+		
 	}
 
 	private JPanel contentPane;

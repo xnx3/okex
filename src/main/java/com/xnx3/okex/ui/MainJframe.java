@@ -141,7 +141,7 @@ public class MainJframe extends JFrame {
 		JButton button_5 = new JButton("计划委托自动下单");
 		button_5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new EditJiHuaWeiTuoJframe().setVisible(true);
+				new JiHuaWeiTuoJframe().setVisible(true);
 			}
 		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
