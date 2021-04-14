@@ -9,6 +9,7 @@ import com.xnx3.okex.bean.market.Book;
 import com.xnx3.okex.bean.market.PriceNumber;
 import com.xnx3.okex.bean.trade.Jihuaweituo;
 import com.xnx3.okex.util.DB;
+import com.xnx3.okex.util.Log;
 import com.xnx3.swing.DialogUtil;
 
 import net.sf.json.JSONObject;
@@ -53,6 +54,7 @@ public class JiHuaWeiTuo {
 						if(pn.getPrice() <= jihuaweituo.getPrice()){
 							//价格合适，自动买入
 							
+							Log.append("==="+"自动委托，"+jihuaweituo.getInstId()+"，价格:"+jihuaweituo.getPrice()+",已自动下单完毕");
 							TTSUtil.speakByThread("自动委托，"+jihuaweituo.getInstId()+"，价格:"+jihuaweituo.getPrice()+",已自动下单完毕");
 							String orderId = Trade.createOrder(jihuaweituo.getInstId(), jihuaweituo.getSide(), jihuaweituo.getSize(), jihuaweituo.getPrice());
 							if(orderId == null || orderId.length() < 2){
@@ -62,7 +64,7 @@ public class JiHuaWeiTuo {
 								new Thread(new Runnable() {
 									public void run() {
 										try {
-											Thread.sleep(15*60*1000);
+											Thread.sleep(30*60*1000);
 										} catch (InterruptedException e) {
 											e.printStackTrace();
 										}
@@ -71,6 +73,7 @@ public class JiHuaWeiTuo {
 										JSONObject orderJson = Trade.order(jihuaweituo.getInstId(), orderId);
 										if(!orderJson.getString("state").equals("filled")){
 											//只要没有完全成交，那都撤销订单
+											Log.append("==="+jihuaweituo.getInstId()+"超时未成交，已自动撤销委托。单价："+jihuaweituo.getPrice());
 											Trade.cancelOrder(jihuaweituo.getInstId(), orderId);
 											TTSUtil.speakByThread(jihuaweituo.getInstId()+"超时未成交，已自动撤销委托。单价："+jihuaweituo.getPrice());
 										}

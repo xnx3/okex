@@ -21,7 +21,12 @@ public class Log {
 	}
 	
 	public static void append(String text){
-		log.appendLineForLastAndPositionLast(text);
-		log.setVisible(true);
+		System.out.println(text+"\t\tLog");
+		try {
+			log.appendLineForLastAndPositionLast(text);
+			log.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

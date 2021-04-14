@@ -17,14 +17,13 @@ import com.xnx3.swing.DialogUtil;
  */
 public class Entry {
 	public static void main(String[] args) {
-//		new DomainChange().start(); //接口自动切换，自动切换为当前能正常访问通的接口
-		
-		//加载okex.config
-		OkexSet.load();
-		
 		MainJframe mainJframe = new MainJframe();
 		mainJframe.setVisible(true);
 		
+		new DomainChange().start(); //接口自动切换，自动切换为当前能正常访问通的接口
+		
+		//加载okex.config
+		OkexSet.load();
 		//判断okex接口是否设置，如果未设置，给出提醒
 		if(Global.OK_ACCESS_KEY == null || Global.OK_ACCESS_KEY.length() < 10){
 			DialogUtil.showMessageDialog("请先设置 Okex参数");

@@ -2,6 +2,7 @@ package com.xnx3.okex;
 
 import java.io.File;
 
+import com.xnx3.okex.ui.JiHuaWeiTuoJframe;
 import com.xnx3.okex.util.SystemUtil;
 
 /**
@@ -37,5 +38,12 @@ public class Global {
 	public static String OK_ACCESS_KEY = null;
 	public static String OK_ACCESS_PASSPHRASE = null;
 	public static String OK_ACCESS_SECRET_KEY = null;
+	
+	
+	/***** 界面 ******/
+	public static JiHuaWeiTuoJframe jihuaweituoJframe;
+	static{
+		jihuaweituoJframe = new JiHuaWeiTuoJframe();
+	}
 	
 }

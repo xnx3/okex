@@ -121,7 +121,7 @@ public class SearchBuyDijiaBiJframe extends JFrame {
 						
 						//1. 找到几分钟内，可买的，其内,存的是instId
 						List<String> buyList = new ArrayList<String>();
-						Log.append("搜索"+min+"分钟区间，当前低价的币：");
+						Log.append("自动搜索分析，以"+min+"分钟为一个区间(区块)，分析当前最近的100个区间里，当前的币的价格（当前区间），在这100个区间中，属于 "+((int)baifenbiIndex)+" 个最低价格区间之一的币种：");
 						
 						JSONArray allHangqing = Ticker.allHangqing();
 						for (int i = 0; i < allHangqing.size(); i++) {

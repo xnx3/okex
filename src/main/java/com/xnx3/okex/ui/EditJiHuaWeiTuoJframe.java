@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 import com.xnx3.DateUtil;
 import com.xnx3.Lang;
 import com.xnx3.media.TTSUtil;
+import com.xnx3.okex.Global;
 import com.xnx3.okex.api.Market;
 import com.xnx3.okex.api.Trade;
 import com.xnx3.okex.bean.market.Book;
@@ -60,6 +61,7 @@ public class EditJiHuaWeiTuoJframe extends JFrame {
 		JLabel lblNewLabel_4 = new JLabel("执行操作");
 		
 		sideComboBox = new JComboBox();
+		sideComboBox.setEnabled(false);
 		sideComboBox.setModel(new DefaultComboBoxModel(new String[] {"买入", "卖出"}));
 		
 		JLabel lblNewLabel_5 = new JLabel("数量");
@@ -69,7 +71,7 @@ public class EditJiHuaWeiTuoJframe extends JFrame {
 		
 		JLabel lblNewLabel_6 = new JLabel("个");
 		
-		JButton saveBtnNewButton = new JButton("保存并启动");
+		JButton saveBtnNewButton = new JButton("保存");
 		saveBtnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -121,7 +123,10 @@ public class EditJiHuaWeiTuoJframe extends JFrame {
 					DB.getDatabase().update(updateSql);
 				}
 				
-				//关闭
+				//刷新列表
+				Global.jihuaweituoJframe.loadJTableData();
+				
+				//关闭当前
 				setVisible(false);
 				
 			}

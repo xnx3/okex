@@ -1,38 +1,33 @@
 package com.xnx3.okex.ui;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
 import com.xnx3.okex.Global;
 import com.xnx3.okex.action.PMA;
 import com.xnx3.okex.api.Ticker;
 import com.xnx3.okex.util.Log;
-import com.xnx3.swing.LogFrame;
+import com.xnx3.okex.util.SystemUtil;
 
 import net.sf.json.JSONObject;
-
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
 import javax.swing.JTextField;
-
+import javax.swing.SwingConstants;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.Cursor;
 public class MainJframe extends JFrame {
 
 	private JPanel contentPane;
-	private JComboBox requestEndpointComboBox;
 	private JTextField pmaTextField;
+	private JLabel jiedianLabel;
 
 	/**
 	 * Launch the application.
@@ -54,38 +49,16 @@ public class MainJframe extends JFrame {
 	 * Create the frame.
 	 */
 	public MainJframe() {
+		setTitle("okex辅助");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 391);
+		setBounds(100, 100, 393, 453);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		JLabel label = new JLabel("请求节点");
-		
-		requestEndpointComboBox = new JComboBox();
-		requestEndpointComboBox.addPropertyChangeListener(new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-			}
-		});
-		requestEndpointComboBox.setModel(new DefaultComboBoxModel(new String[] {"hk.okex.zvo.cn", "xinjiapo.okex.zvo.cn", "meiguo.okex.zvo.cn"}));
+		JLabel label = new JLabel("当前请求节点");
 		
 		JPanel panel = new JPanel();
-		
-		JButton button = new JButton("使用");
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				switch (requestEndpointComboBox.getSelectedIndex()) {
-				case 0:
-					Global.OKEX_DOMAIN = "http://hk.okex.zvo.cn";
-					break;
-				case 1:
-					Global.OKEX_DOMAIN = "http://xinjiapo.okex.zvo.cn";
-				default:
-					Global.OKEX_DOMAIN = "http://meiguo.okex.zvo.cn";
-					break;
-				}
-			}
-		});
 		
 		JButton button_1 = new JButton("未成交订单列表");
 		button_1.addActionListener(new ActionListener() {
@@ -124,7 +97,7 @@ public class MainJframe extends JFrame {
 			}
 		});
 		
-		JButton btnNewButton_1 = new JButton("自动搜索当前低价的币");
+		JButton btnNewButton_1 = new JButton("搜索当前低价的币");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new SearchBuyDijiaBiJframe().setVisible(true);
@@ -141,46 +114,55 @@ public class MainJframe extends JFrame {
 		JButton button_5 = new JButton("计划委托自动下单");
 		button_5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new JiHuaWeiTuoJframe().setVisible(true);
+				Global.jihuaweituoJframe.setVisible(true);
 			}
 		});
+		
+		JLabel label_1 = new JLabel("第一步：");
+		
+		JLabel label_2 = new JLabel("功能：");
+		
+		jiedianLabel = new JLabel("正在搜索可用节点...");
+		
+		JLabel lblNewLabel_1 = new JLabel("<html>\n说明：<br>\n当前只支持 BTC、USDT 为货币进行的交易。<br>\n交流论坛：  www.xxxxxx.com  欢迎进行沟通");
+		lblNewLabel_1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		lblNewLabel_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				SystemUtil.openUrl("http://www.leimingyun.com");
+			}
+		});
+		lblNewLabel_1.setHorizontalAlignment(SwingConstants.LEFT);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
+					.addContainerGap()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblNewLabel_1, GroupLayout.PREFERRED_SIZE, 374, GroupLayout.PREFERRED_SIZE)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(label, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)
+							.addComponent(label, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(requestEndpointComboBox, GroupLayout.PREFERRED_SIZE, 170, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(button))
+							.addComponent(jiedianLabel, GroupLayout.PREFERRED_SIZE, 197, GroupLayout.PREFERRED_SIZE))
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(12)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(label_1)
+								.addComponent(label_2))
+							.addGap(23)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnOkex)
 								.addGroup(gl_contentPane.createSequentialGroup()
-									.addComponent(button_1)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(button_3))
-								.addComponent(panel, GroupLayout.PREFERRED_SIZE, 394, GroupLayout.PREFERRED_SIZE)
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addGap(6)
-									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-										.addGroup(gl_contentPane.createSequentialGroup()
-											.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 189, GroupLayout.PREFERRED_SIZE)
-											.addGap(18)
-											.addComponent(btnNewButton_1))
-										.addGroup(gl_contentPane.createSequentialGroup()
-											.addComponent(button_2)
-											.addGap(18)
-											.addComponent(button_4)
-											.addPreferredGap(ComponentPlacement.UNRELATED)
-											.addComponent(button_5, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE))))))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(btnOkex)))
-					.addContainerGap(25, Short.MAX_VALUE))
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+										.addComponent(btnNewButton_1, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+										.addComponent(button_5, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+										.addComponent(button_4, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+										.addComponent(button_2, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+										.addComponent(button_3, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+										.addComponent(button_1, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+										.addComponent(btnNewButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+									.addGap(280)
+									.addComponent(panel, GroupLayout.PREFERRED_SIZE, 394, GroupLayout.PREFERRED_SIZE)))))
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -188,26 +170,35 @@ public class MainJframe extends JFrame {
 					.addContainerGap()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(label)
-						.addComponent(requestEndpointComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(button))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btnOkex)
+						.addComponent(jiedianLabel))
 					.addGap(18)
-					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(button_1)
-						.addComponent(button_3))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(button_2)
-						.addComponent(button_4)
-						.addComponent(button_5))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnNewButton)
-						.addComponent(btnNewButton_1))
-					.addContainerGap(22, Short.MAX_VALUE))
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+								.addComponent(btnOkex)
+								.addComponent(label_1, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
+							.addGap(30)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(label_2)
+								.addComponent(button_1))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(button_3)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(button_2)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(button_4)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(button_5)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnNewButton)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnNewButton_1)
+							.addGap(18)
+							.addComponent(lblNewLabel_1, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
+							.addContainerGap())
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(panel, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
+							.addGap(86))))
 		);
 		
 		JButton btnBtm = new JButton("PMA_BTC 转 USDK");
@@ -256,11 +247,24 @@ public class MainJframe extends JFrame {
 		);
 		panel.setLayout(gl_panel);
 		contentPane.setLayout(gl_contentPane);
+		
+		
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				getJiedianLabel().setText(Global.OKEX_DOMAIN);
+			}
+		}).start();
 	}
-	public JComboBox getRequestEndpointComboBox() {
-		return requestEndpointComboBox;
-	}
+
 	public JTextField getPmaTextField() {
 		return pmaTextField;
+	}
+	public JLabel getJiedianLabel() {
+		return jiedianLabel;
 	}
 }

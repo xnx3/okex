@@ -21,6 +21,7 @@ import com.xnx3.okex.bean.trade.Jihuaweituo;
 import com.xnx3.okex.bean.trade.Order;
 import com.xnx3.okex.util.DB;
 import com.xnx3.okex.util.DoubleUtil;
+import com.xnx3.okex.util.Log;
 import com.xnx3.swing.DialogUtil;
 
 import javax.swing.JScrollPane;
@@ -69,7 +70,6 @@ public class JiHuaWeiTuoJframe extends JFrame {
 	 */
 	public JiHuaWeiTuoJframe() {
 		setTitle("计划委托");
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -164,6 +164,8 @@ public class JiHuaWeiTuoJframe extends JFrame {
 	                	
 	                	JiHuaWeiTuo.runThread(weituo);
 	                	
+	                	Log.append("开启计划委托 "+instId+",  "+(side.equals("buy")? "买入":"卖出")+", 单价:"+table.getValueAt(focusedRowIndex, 3).toString());
+	                	
 	                	//设置此委托为已启动
 	                	DB.getDatabase().update("update jihuaweituo set runstate = 1 WHERE id = '"+weituo.getId()+"'");
 	                	//刷新table
@@ -211,12 +213,11 @@ public class JiHuaWeiTuoJframe extends JFrame {
 	
 
 	/**
-	 * 加载表格数据
+	 * 重新加载表格数据
 	 */
-	private void loadJTableData(){
+	public void loadJTableData(){
 		model.setRowCount(0); //清除所有数据
 		List<Jihuaweituo> list = DB.getDatabase().select(Jihuaweituo.class, "ORDER BY instId ASC"); 
-		System.out.println(list.size());
 		for (int i = 0; i < list.size(); i++) {
 			Jihuaweituo weituo = list.get(i);
 			 Vector vRow = new Vector();
