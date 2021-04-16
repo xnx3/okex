@@ -1,8 +1,11 @@
 package com.xnx3.okex.action;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.xnx3.DateUtil;
+import com.xnx3.exception.NotReturnValueException;
 import com.xnx3.media.TTSUtil;
 import com.xnx3.okex.api.Market;
 import com.xnx3.okex.api.Public;
@@ -10,6 +13,7 @@ import com.xnx3.okex.api.Ticker;
 import com.xnx3.okex.api.Trade;
 import com.xnx3.okex.bean.Instrument;
 import com.xnx3.okex.bean.market.Book;
+import com.xnx3.okex.bean.market.Candle;
 import com.xnx3.okex.bean.market.PriceNumber;
 import com.xnx3.okex.suanfa.market.kLine.KLine;
 import com.xnx3.okex.util.DoubleUtil;
@@ -34,28 +38,31 @@ public class BaoDieMaiRu {
 	public static void main(String[] args) {
 		//加载okex.config
 		OkexSet.load();
+		System.out.println(Trade.createOrder("XUC-USDT", "sell", 1.23456, 0.98765));
+		
+//		sell("PMA-BTC");
 		
 //		check("XPO-USDT", 0.05, 1005);
 //		check("XUC-USDT", 0.01, 1.1);
 		
-		
-		JSONArray allHangqing = Ticker.allHangqing();
-		while(true){
-			for (int i = 0; i < allHangqing.size(); i++) {
-				String instId = allHangqing.getJSONObject(i).getString("instId");
-				String moneyName = InstUtil.getPriceName(instId);
-				if(moneyName.equals("USDT") || moneyName.equals("BTC")){
-					check(instId, 0.02, 0);
-				}
-			}
-			
-			try {
-				//每30秒进行一次检测
-				Thread.sleep(30 * 1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+//		
+//		JSONArray allHangqing = Ticker.allHangqing();
+//		while(true){
+//			for (int i = 0; i < allHangqing.size(); i++) {
+//				String instId = allHangqing.getJSONObject(i).getString("instId");
+//				String moneyName = InstUtil.getPriceName(instId);
+//				if(moneyName.equals("USDT") || moneyName.equals("BTC")){
+//					check(instId, 0.02, 0);
+//				}
+//			}
+//			
+//			try {
+//				//每30秒进行一次检测
+//				Thread.sleep(30 * 1000);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
 	}
 	
 	
@@ -176,12 +183,43 @@ public class BaoDieMaiRu {
 							//完全成交了，那么自动委托卖出去
 							
 							
-							Trade.cancelOrder(instId, orderId);
-							Log.append("自动下单==="+instId+"超时未成交，已自动撤销委托。单价："+buyPrice);
-							TTSUtil.speakByThread(instId+"超时未成交，已自动撤销委托。单价："+buyPrice);
+							
+							/****** 计算卖出去的价格 *****/
+							double allPrice = 0;	//20次的总价格
+							
+							//获取当前20分钟内，这个币卖方的卖价平均价
+							List<Candle> candleList = Market.candles(instId, "1m");
+							for (int i = 0; i < candleList.size() & i < 20; i++) {
+								Candle candle = candleList.get(i);
+								allPrice = DoubleUtil.add(allPrice, candle.getKaipanPrice());
+								try {
+									System.out.println(DateUtil.dateFormat(candle.getTime(), "yyyy-MM-dd hh:mm:ss")+", "+candle.toString());
+								} catch (NotReturnValueException e) {
+									e.printStackTrace();
+								}
+							}
+							
+							//平均价
+							double pingjujjia = allPrice/20;
+							System.out.println("20次总价:"+allPrice+", 平均价："+pingjujjia);
+							
+							//判断计算出来的平均价是否比买入价低，如果比买入价低，那么就先不卖了
+							double mairujia = orderJson.getDouble("avgPx");
+							if(mairujia >= pingjujjia){
+								//这一单是赔本的，退出，不卖了
+								System.out.println("========自动卖出时，计算的是赔本了，这一笔不卖了。买入均价："+mairujia+", 卖出计算你的平均价："+pingjujjia);
+								return;
+							}
+							
+							//计算卖出数量，要减去买入扣除的手续费
+							double sellSize = orderJson.getDouble("sz") * 0.998;
+							Trade.createOrder(instId, "sell", sellSize, pingjujjia);
+							
+							Log.append("已自动买入 "+instId+",单价："+mairujia+"， 自动以单价"+pingjujjia+"卖出");
+							//结束线程
+							return;
 						}
 					}
-					
 					
 					//如果未成交自动取消委托
 					JSONObject orderJson = Trade.order(instId, orderId);
@@ -199,5 +237,35 @@ public class BaoDieMaiRu {
 		TTSUtil.speakByThread("暴跌，"+instId+", 购买！");
 	}
 	
-	
+	public static void sell(String instId){
+		double mairujia = 0;
+		
+		double allPrice = 0;	//20次的总价格
+		
+		//获取当前20分钟内，这个币卖方的卖价平均价
+		List<Candle> candleList = Market.candles(instId, "1m");
+		for (int i = 0; i < candleList.size() & i < 20; i++) {
+			Candle candle = candleList.get(i);
+			allPrice = DoubleUtil.add(allPrice, candle.getKaipanPrice());
+			try {
+				System.out.println(DateUtil.dateFormat(candle.getTime(), "yyyy-MM-dd hh:mm:ss")+", "+candle.toString());
+			} catch (NotReturnValueException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		//平均价
+		double pingjujjia = allPrice/20;
+		System.out.println("20次总价:"+allPrice+", 平均价："+pingjujjia);
+		
+		//判断计算出来的平均价是否比买入价低，如果比买入价低，那么就先不卖了
+		if(mairujia >= pingjujjia){
+			//这一单是赔本的，退出，不卖了
+			System.out.println("========自动卖出时，计算的是赔本了，这一笔不卖了");
+			return;
+		}
+		
+		Trade.createOrder(instId, "sell", 1.23456, pingjujjia);
+		
+	} 
 }
