@@ -58,7 +58,7 @@ public class BaoDieMaiRu {
 			
 			try {
 				//每20秒进行一次检测
-				Thread.sleep(20 * 1000);
+				Thread.sleep(30 * 1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -77,7 +77,7 @@ public class BaoDieMaiRu {
 		
 		//加个延迟 50毫秒
 		try {
-			Thread.sleep(50);
+			Thread.sleep(105);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

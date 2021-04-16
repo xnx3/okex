@@ -62,8 +62,16 @@ public class HttpsUtil{
 		}else{
 			hr = http.get(Global.OKEX_DOMAIN+url);
 		}
-		
+		if(hr.getCode() != 200){
+			Log.log(hr.toString());
+		}
+		if(hr.getContent() ==null || hr.getContent().length() < 1) {
+			Log.log(hr.toString());
+		}
 		JSONObject json = JSONObject.fromObject(hr.getContent());
+		if(!json.getString("code").equals("0")){
+			Log.log("接口响应失败： \t"+json.toString());
+		}
 		return json;
 	}
 	
