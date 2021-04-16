@@ -142,7 +142,7 @@ public class BaoDieMaiRu {
 			//计算的购买总金额不合规，退出
 			return;
 		}
-		if(buyMinMoney > 20){
+		if(buyMinMoney > 3){
 			//超过最大数的USDT太贵，风险大，不买
 			return;
 		}
@@ -170,17 +170,27 @@ public class BaoDieMaiRu {
 							e.printStackTrace();
 						}
 						
-						//如果未成交自动取消委托
+						//如果已成交，那么自动委托卖出
 						JSONObject orderJson = Trade.order(instId, orderId);
-						if(!orderJson.getString("state").equals("filled")){
-							//只要没有完全成交，那都撤销订单
+						if(orderJson.getString("state").equals("filled")){
+							//完全成交了，那么自动委托卖出去
+							
+							
 							Trade.cancelOrder(instId, orderId);
 							Log.append("自动下单==="+instId+"超时未成交，已自动撤销委托。单价："+buyPrice);
-							
 							TTSUtil.speakByThread(instId+"超时未成交，已自动撤销委托。单价："+buyPrice);
 						}
 					}
 					
+					
+					//如果未成交自动取消委托
+					JSONObject orderJson = Trade.order(instId, orderId);
+					if(!orderJson.getString("state").equals("filled")){
+						//只要没有完全成交，那都撤销订单
+						Trade.cancelOrder(instId, orderId);
+						Log.append("自动下单==="+instId+"超时未成交，已自动撤销委托。单价："+buyPrice);
+						TTSUtil.speakByThread(instId+"超时未成交，已自动撤销委托。单价："+buyPrice);
+					}
 					
 				}
 			}).start();
