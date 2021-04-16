@@ -57,8 +57,8 @@ public class BaoDieMaiRu {
 			}
 			
 			try {
-				//每40秒进行一次检测
-				Thread.sleep(40 * 1000);
+				//每20秒进行一次检测
+				Thread.sleep(20 * 1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -168,11 +168,11 @@ public class BaoDieMaiRu {
 			//创建订单成功后，跟踪，15分钟内没有成交，那么自动撤销
 			new Thread(new Runnable() {
 				public void run() {
-					int xunhuan = 15;
-					while(--xunhuan > 1){
-						//每分钟循环检测一次
+					int xunhuan = 12; //120s
+					while(xunhuan-- > 0){
+						//每10s循环检测一次
 						try {
-							Thread.sleep(60*1000);
+							Thread.sleep(10*1000);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
