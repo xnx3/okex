@@ -1,6 +1,7 @@
 package com.xnx3.okex.action;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -47,19 +48,42 @@ public class BaoDieMaiRu {
 		
 //		
 		JSONArray allHangqing = Ticker.allHangqing();
-		while(true){
-			for (int i = 0; i < allHangqing.size(); i++) {
-				String instId = allHangqing.getJSONObject(i).getString("instId");
-				String moneyName = InstUtil.getPriceName(instId);
-				if(moneyName.equals("USDT") || moneyName.equals("BTC")){
-					check(instId, 0.02, 0);
-				}
+		Map<String, String> instIdMap = new HashMap<String, String>();
+		for (int i = 0; i < allHangqing.size(); i++) {
+			String instId = allHangqing.getJSONObject(i).getString("instId");
+			String moneyName = InstUtil.getPriceName(instId);
+			if(moneyName.equals("USDT") || moneyName.equals("BTC")){
+				instIdMap.put(instId, instId);
 			}
+		}
+		
+		System.out.println(instIdMap.size());
+		
+		while(true){
+			
+			Iterator<Map.Entry<String, String>> it = instIdMap.entrySet().iterator();
+	        while(it.hasNext()){
+	            Map.Entry<String, String> entry = it.next();
+	            String instId = entry.getKey();
+				try {
+					check(instId, 0.03, 0);
+					
+					Thread.sleep(100);
+				} catch (Exception e) {
+					e.printStackTrace();
+					it.remove();//使用迭代器的remove()方法删除元素，后面不再扫描这个币
+				}
+	        }
 			
 			try {
 				//每20秒进行一次检测
-				Thread.sleep(30 * 1000);
+				Thread.sleep(1 * 1000);
 			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			try {
+				System.out.println("一轮完毕，"+DateUtil.dateFormat(DateUtil.timeForUnix10(), "yyyy-MM-dd hh:mm:ss"));
+			} catch (NotReturnValueException e) {
 				e.printStackTrace();
 			}
 		}
@@ -74,14 +98,6 @@ public class BaoDieMaiRu {
 	 * @param buySize 自动委托购买的数量
 	 */
 	public static void check(String instId, double baifenbi, double buySize){
-		
-		//加个延迟 50毫秒
-		try {
-			Thread.sleep(105);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
 		/******* 1. 检测出价的深度，是否出现了暴跌，暴跌百分比是否达标 ********/
 		
 		//获取当前深度
