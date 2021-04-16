@@ -11,6 +11,7 @@ public class Instrument {
 	private String instId;	//产品id， 如 BTC-USD-SWAP
 	private double minSize;	//一次最少可以买多少个
 	private double minAddSize;	//数量一次最小可以加多少个
+	private double minAddPrice;	//价格一次最小可以加多少
 	
 	public Instrument() {
 	}
@@ -19,6 +20,7 @@ public class Instrument {
 		this.instId = json.getString("instId");
 		this.minSize = json.getDouble("minSz");
 		this.minAddSize = json.getDouble("lotSz");
+		this.minAddPrice = json.getDouble("tickSz");
 	}
 	
 	
@@ -39,6 +41,19 @@ public class Instrument {
 	}
 	public void setMinAddSize(double minAddSize) {
 		this.minAddSize = minAddSize;
+	}
+
+	public double getMinAddPrice() {
+		return minAddPrice;
+	}
+
+	public void setMinAddPrice(double minAddPrice) {
+		this.minAddPrice = minAddPrice;
+	}
+
+	@Override
+	public String toString() {
+		return JSONObject.fromObject(this).toString();
 	}
 	
 }

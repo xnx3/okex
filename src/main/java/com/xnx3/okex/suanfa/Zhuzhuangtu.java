@@ -6,6 +6,11 @@ import com.xnx3.okex.suanfa.market.kLine.KBuyBean;
 import com.xnx3.okex.suanfa.market.kLine.KItemBean;
 import com.xnx3.okex.suanfa.market.kLine.KLine;
 
+/**
+ * 柱状图
+ * @author 管雷鸣
+ *
+ */
 public class Zhuzhuangtu {
 	
 	public static void main(String[] args) {

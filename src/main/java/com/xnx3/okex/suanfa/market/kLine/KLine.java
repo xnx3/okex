@@ -132,7 +132,7 @@ public class KLine {
 	 * 			240	4小时
 	 * 			720	12小时
 	 * 			1440 24小时
-	 * @param chenggongjilv 成功几率，0.1 就比 0.1 高，不要超过1，取值0.1 ~ 1
+	 * @param chenggongjilv 成功几率，0.01 就比 0.1 高，不要超过1，取值0.01 ~ 1, 一般范围在0.1~0.02
 	 * @return 适合买入了，就返回true
 	 */
 	public static boolean isDigu(String instId, int time, double chenggongjilv){
