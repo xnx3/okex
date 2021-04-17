@@ -165,7 +165,7 @@ public class BaoDieMaiRu {
 		}
 		//判断上次获取到现在有没有超过75秒，超过75秒则不作数
 		if(DateUtil.timeForUnix10() - upBookBean.getTime() > 75){
-			System.out.println("超时，"+(DateUtil.timeForUnix10() - upBookBean.getTime())+", 不作数");
+			System.out.println("超时，"+(DateUtil.timeForUnix10() - upBookBean.getTime())+", 不作数， -- "+upBookBean.getTime());
 			bookMap.put(instId, new BookBean(book, DateUtil.timeForUnix10()));
 			return;
 		}
@@ -363,6 +363,8 @@ class BookBean{
 	public BookBean() {
 	}
 	public BookBean(Book book, int time) {
+		this.book = book;
+		this.time = time;
 	}
 	
 	public Book getBook() {
