@@ -232,25 +232,25 @@ public class BaoDieMaiRu {
 			currentMoneyBeishu = 1;
 		}else if(instIdDayMoneyDouble < 30000){
 			//不高于6USDT
-			currentMoneyBeishu = 6/buyAllMoney;
+			currentMoneyBeishu = 4/buyAllMoney;
 		}else if(instIdDayMoneyDouble < 50000){
 			//不高于10USDT
-			currentMoneyBeishu = 10/buyAllMoney;
-		}else if(instIdDayMoneyDouble < 1000000){
+			currentMoneyBeishu = 8/buyAllMoney;
+		}else if(instIdDayMoneyDouble < 100000){
 			//不高于20USDT
-			currentMoneyBeishu = 20/buyAllMoney;
-		}else if(instIdDayMoneyDouble < 5000000){
+			currentMoneyBeishu = 15/buyAllMoney;
+		}else if(instIdDayMoneyDouble < 1000000){
 			//不高于40USDT
 //			currentMoneyBeishu = 40/buyAllMoney;
 			currentMoneyBeishu = 25/buyAllMoney;
-		}else if(instIdDayMoneyDouble < 30000000){
+		}else if(instIdDayMoneyDouble < 5000000){
 			//不高于70USDT
 //			currentMoneyBeishu = 70/buyAllMoney;
-			currentMoneyBeishu = 30/buyAllMoney;
+			currentMoneyBeishu = 35/buyAllMoney;
 		}else{
 			//更多，不高于200。这里以后可以在加
 //			currentMoneyBeishu = 200/buyAllMoney;
-			currentMoneyBeishu = 35/buyAllMoney;
+			currentMoneyBeishu = 40/buyAllMoney;
 		}
 		
 		buySize = buySize * currentMoneyBeishu;
@@ -262,7 +262,7 @@ public class BaoDieMaiRu {
 			double usdtPrice = Money.BtcToUsdt(buyPrice);
 			buyAllMoney = buySize * usdtPrice;
 		}
-		if(buyAllMoney > (35+1)){
+		if(buyAllMoney > (40+1)){
 			//这里先按照最大算吧
 			//超过最大数的USDT太贵，风险大，不买。 因为是按照倍数加的数量，所以可能会有浮点误差。多加了1
 			System.out.println("error - error - -------计算超过最大数："+buyAllMoney);
@@ -273,10 +273,6 @@ public class BaoDieMaiRu {
 		
 		//分析完成，合适，可以自动购买
 		System.out.println(instId+ "当前最低价："+buyPn.getPrice()+" , 每次最小加价："+Public.getInstrument(instId).getMinAddPrice()+", 计算出来的购买价："+buyPrice+",  消耗USDT："+DoubleUtil.doubleToString(buyAllMoney));
-		
-		if(true){
-			return;
-		}
 		
 		//创建委托订单
 		String orderId = Trade.createOrder(instId, "buy", buySize, buyPrice);
