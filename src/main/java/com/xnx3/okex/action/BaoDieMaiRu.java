@@ -32,7 +32,7 @@ import net.sf.json.JSONObject;
 public class BaoDieMaiRu {
 	//key:instId  value:当前的Book数据
 	public static Map<String, Book> bookMap;
-	public static double buyMaxMoney = 10;	//一次购买最大花费的总金额，单位是USDT
+	public static double buyMaxMoney = 20;	//一次购买最大花费的总金额，单位是USDT
 	static{
 		bookMap = new HashMap<String, Book>();
 	}
