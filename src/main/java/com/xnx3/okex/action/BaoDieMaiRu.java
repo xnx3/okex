@@ -33,11 +33,11 @@ public class BaoDieMaiRu {
 	public static double buyMaxMoney = 20;	//购买最小单位的币，一次购买最大花费的总金额，单位是USDT
 	
 	//key:instId  value:当前的Book数据
-	public static Map<String, Book> bookMap;
+	public static Map<String, BookBean> bookMap;
 	public static Map<String, Double> instIdDayMoney;	//这个币24小时的成交量，单位是USDT
 	
 	static{
-		bookMap = new HashMap<String, Book>();
+		bookMap = new HashMap<String, BookBean>();
 		instIdDayMoney = new HashMap<String, Double>();
 	}
 
@@ -102,10 +102,8 @@ public class BaoDieMaiRu {
         		}
         	}
         }
-		
         
 		System.out.println(instIdMap.size());
-		
 		
 		while(true){
 			
@@ -158,12 +156,21 @@ public class BaoDieMaiRu {
 		Book book = Market.books(instId, 5);
 		
 		//上次拉取的数据
-		Book upBook = bookMap.get(instId); 
-		if(upBook == null){
+		BookBean upBookBean = bookMap.get(instId);
+		if(upBookBean == null){
 			//当前是第一次，还没有上次的数据，那么就只是保留数据
-			bookMap.put(instId, book);
+			upBookBean = new BookBean();
+			bookMap.put(instId, new BookBean(book, DateUtil.timeForUnix10()));
 			return;
 		}
+		//判断上次获取到现在有没有超过75秒，超过75秒则不作数
+		if(DateUtil.timeForUnix10() - upBookBean.getTime() > 75){
+			System.out.println("超时，"+(DateUtil.timeForUnix10() - upBookBean.getTime())+", 不作数");
+			bookMap.put(instId, new BookBean(book, DateUtil.timeForUnix10()));
+			return;
+		}
+		
+		Book upBook = upBookBean.getBook();
 
 		/*** 之前的有数据，那么将现在的跟之前的数据进行比较，看是否有跌 ***/
 		//当前买的
@@ -175,7 +182,7 @@ public class BaoDieMaiRu {
 //		System.out.println(instId+"  -- 跌幅:"+DoubleUtil.doubleToString(diefu));
 		
 		//缓存最新数据
-		bookMap.put(instId, book);
+		bookMap.put(instId, new BookBean(book, DateUtil.timeForUnix10()));
 		
 		if(diefu < 0 || diefu < baifenbi){
 			//没有达到购买条件，退出当前。
@@ -346,6 +353,29 @@ public class BaoDieMaiRu {
 		}
 		
 		TTSUtil.speakByThread("暴跌"+instId+"已自动委托购买");
+	}
+	
+}
+class BookBean{
+	public Book book;
+	public int time;	//当前book的获取时间
+	
+	public BookBean() {
+	}
+	public BookBean(Book book, int time) {
+	}
+	
+	public Book getBook() {
+		return book;
+	}
+	public void setBook(Book book) {
+		this.book = book;
+	}
+	public int getTime() {
+		return time;
+	}
+	public void setTime(int time) {
+		this.time = time;
 	}
 	
 }
