@@ -297,7 +297,7 @@ public class KLine {
 		String timeStr = "";
 		switch (time) {
 		case 1440:
-			timeStr="24H";
+			timeStr="1D";
 			break;
 		case 720:
 			timeStr="12H";

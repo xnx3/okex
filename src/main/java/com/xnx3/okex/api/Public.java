@@ -37,7 +37,7 @@ public class Public {
 		Map<String, JSONObject> instrumentMap = (Map<String, JSONObject>)CacheUtil.get("public:instruments");
 		if(instrumentMap == null){
 			//从接口取
-			JSONArray array = com.xnx3.okex.util.HttpsUtil.getLoginRequest("/api/v5/public/instruments?instType=SPOT", "").getJSONArray("data");
+			JSONArray array = com.xnx3.okex.util.HttpsUtil.get("/api/v5/public/instruments?instType=SPOT").getJSONArray("data");
 			instrumentMap = new HashMap<String, JSONObject>();
 			for (int i = 0; i < array.size(); i++) {
 				JSONObject json = array.getJSONObject(i);

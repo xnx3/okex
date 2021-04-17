@@ -74,7 +74,7 @@ public class SearchBuyDijiaBiJframe extends JFrame {
 		JLabel lblNewLabel = new JLabel("时间区间");
 		
 		timeComboBox = new JComboBox();
-		timeComboBox.setModel(new DefaultComboBoxModel(new String[] {"1分钟", "3分钟", "5分钟", "15分钟", "30分钟", "1小时", "2小时"}));
+		timeComboBox.setModel(new DefaultComboBoxModel(new String[] {"1分钟", "3分钟", "5分钟", "15分钟", "30分钟", "1小时", "2小时", "1天"}));
 		
 		JButton btnNewButton = new JButton("开始搜索");
 		btnNewButton.addActionListener(new ActionListener() {
@@ -104,6 +104,8 @@ public class SearchBuyDijiaBiJframe extends JFrame {
 				case 6:
 					min = 120;
 					break;
+				case 7:
+					min = 1440;
 				default:
 					break;
 				}

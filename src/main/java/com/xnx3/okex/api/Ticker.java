@@ -14,7 +14,7 @@ import net.sf.json.JSONObject;
 
 public class Ticker {
 	public static void main(String[] args) {
-		System.out.println(liruncha());
+		System.out.println(oneHangqing("PMA-BTC"));
 	}
 	
 	/**

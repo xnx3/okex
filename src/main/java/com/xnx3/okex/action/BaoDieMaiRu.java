@@ -30,11 +30,15 @@ import net.sf.json.JSONObject;
  *
  */
 public class BaoDieMaiRu {
+	public static double buyMaxMoney = 20;	//购买最小单位的币，一次购买最大花费的总金额，单位是USDT
+	
 	//key:instId  value:当前的Book数据
 	public static Map<String, Book> bookMap;
-	public static double buyMaxMoney = 20;	//一次购买最大花费的总金额，单位是USDT
+	public static Map<String, Double> instIdDayMoney;	//这个币24小时的成交量，单位是USDT
+	
 	static{
 		bookMap = new HashMap<String, Book>();
+		instIdDayMoney = new HashMap<String, Double>();
 	}
 
 	public static void main(String[] args) {
@@ -48,6 +52,24 @@ public class BaoDieMaiRu {
 //		check("XUC-USDT", 0.01, 1.1);
 		
 //		
+		//将每个币的行情取出来，主要就是一天的成交金额
+		JSONArray hangqingArray = Ticker.allHangqing();
+		for (int i = 0; i < hangqingArray.size(); i++) {
+			JSONObject json = hangqingArray.getJSONObject(i);
+			double money = json.getDouble("volCcy24h");
+			String instId = json.getString("instId");
+			String moneyName = InstUtil.getPriceName(instId);
+			if(moneyName.equals("BTC")){
+				//将BTC转化为USDT
+				instIdDayMoney.put(instId, Money.BtcToUsdt(money));
+			}else if(moneyName.equals("USDT")){
+				instIdDayMoney.put(instId, money);
+			}
+			
+			System.out.println(instId+", "+instIdDayMoney.get(instId));
+		}
+		
+		
 		JSONArray allHangqing = Ticker.allHangqing();
 		Map<String, String> instIdMap = new HashMap<String, String>();
 		for (int i = 0; i < allHangqing.size(); i++) {
@@ -58,7 +80,32 @@ public class BaoDieMaiRu {
 			}
 		}
 		
+		//删除一些稳定币
+		Iterator<Map.Entry<String, String>> itRemove = instIdMap.entrySet().iterator();
+        while(itRemove.hasNext()){
+            Map.Entry<String, String> entry = itRemove.next();
+            String instId = entry.getKey();
+            String name = InstUtil.getName(instId);
+            if(name.equals("USDK") || name.equals("USDT") || name.equals("USDC") || name.equals("DAI") ){
+            	itRemove.remove();//使用迭代器的remove()方法删除元素，后面不再扫描这个币
+            	System.out.println("删除稳定币："+instId);
+            }
+        }
+        
+        //删除掉24小时成交价格小于1万USDT的币
+        for (Map.Entry<String, Double> entry : instIdDayMoney.entrySet()) {
+        	if(entry.getValue() != null && entry.getValue() < 10000){
+        		//删除
+        		if(instIdMap.get(entry.getKey()) != null){
+        			instIdMap.remove(entry.getKey());
+        			System.out.println("删除不到24小时成交不到1万USDT的币:"+entry.getKey());
+        		}
+        	}
+        }
+		
+        
 		System.out.println(instIdMap.size());
+		
 		
 		while(true){
 			
@@ -90,6 +137,12 @@ public class BaoDieMaiRu {
 		}
 	}
 	
+	
+	public static double getInstIdDayChengjiaoMoney(String instId){
+		
+		
+		return 0;
+	}
 	
 
 	/**
@@ -172,7 +225,34 @@ public class BaoDieMaiRu {
 		}
 		
 		/***** 计算，将本次购买的总金额控制在10USDT左右。如果不够这么多，那么多加点数量 ******/
-		double currentMoneyBeishu = buyMaxMoney/buyAllMoney;
+		double currentMoneyBeishu = 1;
+		double instIdDayMoneyDouble = instIdDayMoney.get(instId);
+		if(instIdDayMoneyDouble < 10000){
+			//成交额小于10万USDT，那么就不翻倍了，就按照最小下单吧
+			currentMoneyBeishu = 1;
+		}else if(instIdDayMoneyDouble < 30000){
+			//不高于6USDT
+			currentMoneyBeishu = 6/buyAllMoney;
+		}else if(instIdDayMoneyDouble < 50000){
+			//不高于10USDT
+			currentMoneyBeishu = 10/buyAllMoney;
+		}else if(instIdDayMoneyDouble < 1000000){
+			//不高于20USDT
+			currentMoneyBeishu = 20/buyAllMoney;
+		}else if(instIdDayMoneyDouble < 5000000){
+			//不高于40USDT
+//			currentMoneyBeishu = 40/buyAllMoney;
+			currentMoneyBeishu = 25/buyAllMoney;
+		}else if(instIdDayMoneyDouble < 30000000){
+			//不高于70USDT
+//			currentMoneyBeishu = 70/buyAllMoney;
+			currentMoneyBeishu = 30/buyAllMoney;
+		}else{
+			//更多，不高于200。这里以后可以在加
+//			currentMoneyBeishu = 200/buyAllMoney;
+			currentMoneyBeishu = 35/buyAllMoney;
+		}
+		
 		buySize = buySize * currentMoneyBeishu;
 		//重新计算总价
 		if(moneyName.equals("USDT")){
@@ -182,8 +262,10 @@ public class BaoDieMaiRu {
 			double usdtPrice = Money.BtcToUsdt(buyPrice);
 			buyAllMoney = buySize * usdtPrice;
 		}
-		if(buyAllMoney > (buyMaxMoney+1)){
+		if(buyAllMoney > (35+1)){
+			//这里先按照最大算吧
 			//超过最大数的USDT太贵，风险大，不买。 因为是按照倍数加的数量，所以可能会有浮点误差。多加了1
+			System.out.println("error - error - -------计算超过最大数："+buyAllMoney);
 			return;
 		}
 		
@@ -191,6 +273,10 @@ public class BaoDieMaiRu {
 		
 		//分析完成，合适，可以自动购买
 		System.out.println(instId+ "当前最低价："+buyPn.getPrice()+" , 每次最小加价："+Public.getInstrument(instId).getMinAddPrice()+", 计算出来的购买价："+buyPrice+",  消耗USDT："+DoubleUtil.doubleToString(buyAllMoney));
+		
+		if(true){
+			return;
+		}
 		
 		//创建委托订单
 		String orderId = Trade.createOrder(instId, "buy", buySize, buyPrice);
