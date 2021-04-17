@@ -32,6 +32,7 @@ import net.sf.json.JSONObject;
 public class BaoDieMaiRu {
 	//key:instId  value:当前的Book数据
 	public static Map<String, Book> bookMap;
+	public static double buyMaxMoney = 10;	//一次购买最大花费的总金额，单位是USDT
 	static{
 		bookMap = new HashMap<String, Book>();
 	}
@@ -66,7 +67,7 @@ public class BaoDieMaiRu {
 	            Map.Entry<String, String> entry = it.next();
 	            String instId = entry.getKey();
 				try {
-					check(instId, 0.03, 0);
+					check(instId, 0.03);
 					
 					Thread.sleep(100);
 				} catch (Exception e) {
@@ -97,7 +98,7 @@ public class BaoDieMaiRu {
 	 * @param baifenbi 暴跌暴涨的百分比，这里传入 0.01~0.99，  代表暴涨暴跌1%~99%。 当然也可以传入 0.001
 	 * @param buySize 自动委托购买的数量
 	 */
-	public static void check(String instId, double baifenbi, double buySize){
+	public static void check(String instId, double baifenbi){
 		/******* 1. 检测出价的深度，是否出现了暴跌，暴跌百分比是否达标 ********/
 		
 		//获取当前深度
@@ -148,36 +149,51 @@ public class BaoDieMaiRu {
 		//取当前要委托购买的最低价，也就是当前最低价在额外加一点点价
 		double buyPrice = DoubleUtil.add(buyPn.getPrice(), instrument.getMinAddPrice());
 		
-		//计算当前最低购买数量
-		double buyMinSize = (instrument.getMinSize()*2) + (instrument.getMinAddSize());
+		//计算当前购买数量(这里默认差不多是最小数量了)
+		double buySize = (instrument.getMinSize()*2) + (instrument.getMinAddSize());
 		
-		//计算出当前最低购买数量的金额。如果是btc，换算成USDT
-		double buyMinMoney = -1;
+		//计算出当前购买数量的金额。如果是btc，换算成USDT
+		double buyAllMoney = -1;
 		String moneyName = InstUtil.getPriceName(instId);
 		if(moneyName.equals("USDT")){
-			buyMinMoney = buyMinSize * buyPrice;
+			buyAllMoney = buySize * buyPrice;
 		}else if(moneyName.equals("BTC")){
 			//将BTC换算为USDT
 			double usdtPrice = Money.BtcToUsdt(buyPrice);
-			buyMinMoney = buyMinSize * usdtPrice;
+			buyAllMoney = buySize * usdtPrice;
 		}
-		if(buyMinMoney < 0){
+		if(buyAllMoney < 0){
 			//计算的购买总金额不合规，退出
 			return;
 		}
-		if(buyMinMoney > 10){
+		if(buyAllMoney > buyMaxMoney){
 			//超过最大数的USDT太贵，风险大，不买
 			return;
 		}
 		
+		/***** 计算，将本次购买的总金额控制在10USDT左右。如果不够这么多，那么多加点数量 ******/
+		double currentMoneyBeishu = buyMaxMoney/buyAllMoney;
+		buySize = buySize * currentMoneyBeishu;
+		//重新计算总价
+		if(moneyName.equals("USDT")){
+			buyAllMoney = buySize * buyPrice;
+		}else if(moneyName.equals("BTC")){
+			//将BTC换算为USDT
+			double usdtPrice = Money.BtcToUsdt(buyPrice);
+			buyAllMoney = buySize * usdtPrice;
+		}
+		if(buyAllMoney > (buyMaxMoney+1)){
+			//超过最大数的USDT太贵，风险大，不买。 因为是按照倍数加的数量，所以可能会有浮点误差。多加了1
+			return;
+		}
 		
 		/******* 4. 分析完成，可以购买，进行购买操作 ********/
 		
 		//分析完成，合适，可以自动购买
-		System.out.println(instId+ "当前最低价："+buyPn.getPrice()+" , 每次最小加价："+Public.getInstrument(instId).getMinAddPrice()+", 计算出来的购买价："+buyPrice+",  消耗USDT："+DoubleUtil.doubleToString(buyMinMoney));
+		System.out.println(instId+ "当前最低价："+buyPn.getPrice()+" , 每次最小加价："+Public.getInstrument(instId).getMinAddPrice()+", 计算出来的购买价："+buyPrice+",  消耗USDT："+DoubleUtil.doubleToString(buyAllMoney));
 		
 		//创建委托订单
-		String orderId = Trade.createOrder(instId, "buy", buyMinSize, buyPrice);
+		String orderId = Trade.createOrder(instId, "buy", buySize, buyPrice);
 		if(orderId == null || orderId.length() < 2){
 			//创建订单失败
 		}else{
