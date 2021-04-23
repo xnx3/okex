@@ -135,13 +135,7 @@ public class BaoDieMaiRu {
 	public static void main(String[] args) {
 		//加载okex.config
 		OkexSet.load();
-		
-//		sell("PMA-BTC");
-		
-//		check("XPO-USDT", 0.05, 1005);
-//		check("XUC-USDT", 0.01, 1.1);
-		
-//		
+		run(30);
 		
 	}
 	

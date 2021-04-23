@@ -1,6 +1,7 @@
 package com.xnx3.okex;
 
 import com.xnx3.okex.action.OkexSet;
+import com.xnx3.okex.action.VersionCheck;
 import com.xnx3.okex.bean.trade.Jihuaweituo;
 import com.xnx3.okex.suanfa.FindZuidi;
 import com.xnx3.okex.thread.DomainChange;
@@ -29,9 +30,6 @@ public class Entry {
 			DialogUtil.showMessageDialog("请先设置 Okex参数");
 			return;
 		}
-		System.out.println("Global.OK_ACCESS_KEY  "+Global.OK_ACCESS_KEY);
-		System.out.println("Global.OK_ACCESS_PASSPHRASE  "+Global.OK_ACCESS_PASSPHRASE);
-		System.out.println("Global.OK_ACCESS_SECRET_KEY  "+Global.OK_ACCESS_SECRET_KEY);
 		
 		//初始化计划委托功能，因为是刚打开，所有计划委托肯定都是未开启的。将所有计划委托设置为未开启
 		DB.getDatabase().update("update jihuaweituo set runstate = 0");
@@ -48,6 +46,13 @@ public class Entry {
 				
 //				new NotFinishOrder().start(); //进行中的订单监控
 				new FinishOrder().start(); //订单完成监控
+			}
+		}).start();
+		
+		//新版本检测
+		new Thread(new Runnable() {
+			public void run() {
+				VersionCheck.check(Global.VERSION_CHECK_URL, Global.VERSION, "okex");
 			}
 		}).start();
 		

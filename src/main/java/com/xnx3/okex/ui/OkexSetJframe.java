@@ -9,7 +9,11 @@ import javax.swing.border.EmptyBorder;
 
 import com.xnx3.okex.Global;
 import com.xnx3.okex.action.OkexSet;
+import com.xnx3.okex.api.Account;
+import com.xnx3.okex.util.Log;
 import com.xnx3.swing.DialogUtil;
+
+import net.sf.json.JSONObject;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -78,9 +82,21 @@ public class OkexSetJframe extends JFrame {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				OkexSet.save(getApiKeyTextField().getText(), getSecretKeyTextField().getText(), getPassphraseTextField().getText());
-				DialogUtil.showMessageDialog("已保存");
 				//自动加载数据到Global
 				OkexSet.load();
+				
+				//判断是否准确，自动买一个 PMA
+				JSONObject json = Account.balance();
+				if(json.get("code") == null){
+					Log.append("配置参数验证时异常！请检查三个参数是否准确");
+					return;
+				}
+				if(!json.get("code").equals("0")){
+					Log.append("配置参数验证时异常！请检查三个参数是否准确!OKEX响应："+json.toString());
+					return;
+				}
+				
+				DialogUtil.showMessageDialog("参数验证准确，已保存");
 			}
 		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
