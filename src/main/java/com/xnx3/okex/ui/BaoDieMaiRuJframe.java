@@ -51,7 +51,7 @@ public class BaoDieMaiRuJframe extends JFrame {
 	 */
 	public BaoDieMaiRuJframe() {
 		setTitle("暴跌自动买入卖出");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -70,7 +70,7 @@ public class BaoDieMaiRuJframe extends JFrame {
 				int index = chenggongjilvComboBox.getSelectedIndex();
 				System.out.println(index);
 				// 0:98%;  1:85%;   2:70%
-				int kTime = 1;
+				final int kTime;
 				switch (index) {
 				case 0:
 					kTime = 1440;
@@ -84,11 +84,14 @@ public class BaoDieMaiRuJframe extends JFrame {
 					break;
 				}
 				
-				BaoDieMaiRu.run(kTime);
-				
-				
 				runButton.setText("正在运行中..要关闭直接关掉软件");
 				runButton.setEnabled(false);
+				
+				new Thread(new Runnable() {
+					public void run() {
+						BaoDieMaiRu.run(kTime);
+					}
+				}).start();
 			}
 		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);

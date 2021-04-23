@@ -135,6 +135,12 @@ public class MainJframe extends JFrame {
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.LEFT);
 		
 		JButton btnNewButton_2 = new JButton("暴跌自动买入卖出");
+		BaoDieMaiRuJframe baoDieMaiRuJframe = new BaoDieMaiRuJframe();
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				baoDieMaiRuJframe.setVisible(true);
+			}
+		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
