@@ -32,6 +32,8 @@ import net.sf.json.JSONObject;
 public class BaoDieMaiRu {
 	public static double buyMaxMoney = 20;	//购买最小单位的币，一次购买最大花费的总金额，单位是USDT
 	
+	public static int kLineQujianTime = 1;	//K线的100次中，一次的间隔时间，在决定买时会判断当前处于K线中拿个阶段
+	
 	//key:instId  value:当前的Book数据
 	public static Map<String, BookBean> bookMap;
 	public static Map<String, Double> instIdDayMoney;	//这个币24小时的成交量，单位是USDT
@@ -40,18 +42,12 @@ public class BaoDieMaiRu {
 		bookMap = new HashMap<String, BookBean>();
 		instIdDayMoney = new HashMap<String, Double>();
 	}
-
-	public static void main(String[] args) {
-		//加载okex.config
-		OkexSet.load();
-		System.out.println("搜索开启。。。。");
+	
+	public static void run(int kLineQujianTime){
+		BaoDieMaiRu.kLineQujianTime = kLineQujianTime;
 		
-//		sell("PMA-BTC");
+		Log.append("自动买入启动，搜索开启，搜索中...");
 		
-//		check("XPO-USDT", 0.05, 1005);
-//		check("XUC-USDT", 0.01, 1.1);
-		
-//		
 		//将每个币的行情取出来，主要就是一天的成交金额
 		JSONArray hangqingArray = Ticker.allHangqing();
 		for (int i = 0; i < hangqingArray.size(); i++) {
@@ -88,7 +84,7 @@ public class BaoDieMaiRu {
             String name = InstUtil.getName(instId);
             if(name.equals("USDK") || name.equals("USDT") || name.equals("USDC") || name.equals("DAI") ){
             	itRemove.remove();//使用迭代器的remove()方法删除元素，后面不再扫描这个币
-            	System.out.println("删除稳定币："+instId);
+            	Log.append("删除稳定币："+instId);
             }
         }
         
@@ -98,12 +94,13 @@ public class BaoDieMaiRu {
         		//删除
         		if(instIdMap.get(entry.getKey()) != null){
         			instIdMap.remove(entry.getKey());
-        			System.out.println("删除不到24小时成交不到1万USDT的币:"+entry.getKey());
+        			Log.append("删除不到24小时成交不到1万USDT的币:"+entry.getKey());
         		}
         	}
         }
         
-		System.out.println(instIdMap.size());
+		Log.append("初始化预测完毕，将搜索 "+instIdMap.size()+" 个币种。");
+		Log.append("搜索中...");
 		
 		while(true){
 			
@@ -128,11 +125,24 @@ public class BaoDieMaiRu {
 				e.printStackTrace();
 			}
 			try {
-				System.out.println("一轮完毕，"+DateUtil.dateFormat(DateUtil.timeForUnix10(), "yyyy-MM-dd hh:mm:ss"));
+				Log.append("暴跌自动买入，一轮搜索完毕  "+DateUtil.dateFormat(DateUtil.timeForUnix10(), "yyyy-MM-dd hh:mm:ss"));
 			} catch (NotReturnValueException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public static void main(String[] args) {
+		//加载okex.config
+		OkexSet.load();
+		
+//		sell("PMA-BTC");
+		
+//		check("XPO-USDT", 0.05, 1005);
+//		check("XUC-USDT", 0.01, 1.1);
+		
+//		
+		
 	}
 	
 	
@@ -165,7 +175,7 @@ public class BaoDieMaiRu {
 		}
 		//判断上次获取到现在有没有超过75秒，超过75秒则不作数
 		if(DateUtil.timeForUnix10() - upBookBean.getTime() > 75){
-			System.out.println("超时，"+(DateUtil.timeForUnix10() - upBookBean.getTime())+", 不作数， -- "+upBookBean.getTime());
+			Log.append("暴跌自动买入--数据计算判断超时，"+(DateUtil.timeForUnix10() - upBookBean.getTime())+", 不作数， -- "+upBookBean.getTime());
 			bookMap.put(instId, new BookBean(book, DateUtil.timeForUnix10()));
 			return;
 		}
@@ -195,7 +205,7 @@ public class BaoDieMaiRu {
 		/******* 2. K线分析最近100分钟内，这个币是不是属于可以购买的，是不是危险的币、以及无交易量的币 ********/
 		
 		//K线分析，判断当前1分钟为区间，100区间内，这个币是否是可购买的
-		if(!KLine.isDigu(instId, 1, 0.1)){
+		if(!KLine.isDigu(instId, kLineQujianTime, 0.1)){
 			//System.out.println(instId+", K线分析不合格，不自动购买。");
 			//K线分析不符合
 			return;
@@ -279,7 +289,7 @@ public class BaoDieMaiRu {
 		/******* 4. 分析完成，可以购买，进行购买操作 ********/
 		
 		//分析完成，合适，可以自动购买
-		System.out.println(instId+ "当前最低价："+buyPn.getPrice()+" , 每次最小加价："+Public.getInstrument(instId).getMinAddPrice()+", 计算出来的购买价："+buyPrice+",  消耗USDT："+DoubleUtil.doubleToString(buyAllMoney));
+		Log.append("暴跌自动买入 --执行自动买入操作： "+instId+ "当前最低价："+buyPn.getPrice()+" , 每次最小加价："+Public.getInstrument(instId).getMinAddPrice()+", 计算出来的购买价："+buyPrice+",  消耗USDT："+DoubleUtil.doubleToString(buyAllMoney));
 		
 		//创建委托订单
 		String orderId = Trade.createOrder(instId, "buy", buySize, buyPrice);
@@ -333,7 +343,7 @@ public class BaoDieMaiRu {
 							double sellSize = orderJson.getDouble("sz") * 0.998;
 							Trade.createOrder(instId, "sell", sellSize, sellPrice);
 							
-							Log.append("已自动买入 "+instId+",单价："+mairujia+"， 自动以单价"+sellPrice+"卖出");
+							Log.append("暴跌自动买入，已成功自动买入 "+instId+",单价："+mairujia+"， 自动以单价"+sellPrice+"卖出");
 							//结束线程
 							return;
 						}
@@ -344,7 +354,7 @@ public class BaoDieMaiRu {
 					if(!orderJson.getString("state").equals("filled")){
 						//只要没有完全成交，那都撤销订单
 						Trade.cancelOrder(instId, orderId);
-						Log.append("自动下单==="+instId+"超时未成交，已自动撤销委托。单价："+buyPrice);
+						Log.append("暴跌自动买入，买入订单未在指定时间成交，币种："+instId+"，超时未成交，已自动撤销委托。单价："+buyPrice);
 						TTSUtil.speakByThread(instId+"超时未成交已自动撤销委托");
 					}
 					
