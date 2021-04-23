@@ -125,21 +125,33 @@ public class SearchBuyDijiaBiJframe extends JFrame {
 						List<String> buyList = new ArrayList<String>();
 						Log.append("自动搜索分析，以"+min+"分钟为一个区间(区块)，分析当前最近的100个区间里，当前的币的价格（当前区间），在这100个区间中，属于 "+((int)baifenbiIndex)+" 个最低价格区间之一的币种：");
 						
-						JSONArray allHangqing = Ticker.allHangqing();
+						JSONArray allHangqing = null;
+						try {
+							allHangqing = Ticker.allHangqing();
+						} catch (Exception e2) {
+							e2.printStackTrace();
+							Log.append("通过接口获取当前所有币种行情失败！请重新尝试");
+							return;
+						}
 						for (int i = 0; i < allHangqing.size(); i++) {
 							String instId = allHangqing.getJSONObject(i).getString("instId");
-							String moneyName = InstUtil.getPriceName(instId);
-							if(moneyName.equals("USDK") || moneyName.equals("USDT") || moneyName.equals("BTC")){
-								boolean find = KLine.isDigu(instId, min, baifenbi);
-								if(find){
-									buyList.add(instId);
-									Log.append("低价币：\t"+instId);
+							try {
+								String moneyName = InstUtil.getPriceName(instId);
+								if(moneyName.equals("USDK") || moneyName.equals("USDT") || moneyName.equals("BTC")){
+									boolean find = KLine.isDigu(instId, min, baifenbi);
+									if(find){
+										buyList.add(instId);
+										Log.append("低价币：\t"+instId);
+									}
+									try {
+										Thread.sleep(200);
+									} catch (InterruptedException e) {
+										e.printStackTrace();
+									}
 								}
-								try {
-									Thread.sleep(200);
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-								}
+							} catch (Exception e2) {
+								e2.printStackTrace();
+								Log.append("通过接口获取 "+instId+" 的数据异常，已自动忽略此币");
 							}
 						}
 						Log.append("当前低价的币搜索结束，共搜索到"+buyList.size()+"个");
