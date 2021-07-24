@@ -11,7 +11,7 @@ import net.sf.json.JSONObject;
  *
  */
 public class DomainChange extends Thread{
-	public static String[] domains = {"https://www.okex.win","http://www.okex.com"};
+	public static String[] domains = {"https://www.ouyi.top","http://www.okex.com"};
 	public static HttpUtil http;
 	static{
 		http = new HttpUtil();
